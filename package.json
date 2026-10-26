@@ -1,0 +1,7 @@
+{
+  "name": "nexcreator-ai",
+  "version": "4.0.0",
+  "private": true,
+  "description": "NexCreator AI - Cyberpunk TikTok Affiliate Virtual Studio",
+  "engines": { "node": ">=18" }
+}
