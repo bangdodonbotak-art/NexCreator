@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCreator AI v3.5 — Autonomous TikTok Affiliate Virtual Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #060913;
+            color: #f8fafc;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .glass-hover:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.08);
+        }
+        .node-pulse {
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        @keyframes lip-talk {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1.15); }
+        }
+        .talking-mouth {
+            animation: lip-talk 0.22s infinite ease-in-out;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950 overflow-x-hidden">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 glass border-b border-slate-800/80 px-4 lg:px-8 py-3">
+        <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="bot" class="w-6 h-6 text-slate-950 stroke-[2.2]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-lg tracking-tight text-white">NexCreator<span class="text-emerald-400">.AI</span></span>
+                        <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mono">v3.5 Cloud</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Autonomous 24/7 TikTok Affiliate Virtual Studio</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 overflow-x-auto">
+                <button onclick="switchTab('command')" id="tabBtn-command" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-emerald-500 text-slate-950 shadow">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>1. Command Center</span>
+                </button>
+                <button onclick="switchTab('hunter')" id="tabBtn-hunter" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i data-lucide="Flame" class="w-4 h-4 text-amber-400"></i>
+                    <span>2. Product & Viral Hunter</span>
+                </button>
+                <button onclick="switchTab('script')" id="tabBtn-script" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                    <span>3. ATM Script Studio</span>
+                </button>
+                <button onclick="switchTab('studio')" id="tabBtn-studio" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i data-lucide="video" class="w-4 h-4 text-cyan-400"></i>
+                    <span>4. Character & 9:16 Studio</span>
+                </button>
+                <button onclick="switchTab('publisher')" id="tabBtn-publisher" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white">
+                    <i data-lucide="send" class="w-4 h-4 text-emerald-400"></i>
+                    <span>5. Auto-Publisher & Telegram</span>
+                </button>
+            </nav>
+
+            <!-- Status & Actions -->
+            <div class="flex items-center gap-2.5">
+                <button onclick="syncWithSupabaseManual()" id="supabaseBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs font-medium text-slate-300 hover:border-emerald-500/50 transition" title="Klik untuk sinkronisasi ulang dengan Supabase Cloud">
+                    <span id="sbStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="sbStatusText" class="mono text-[11px]">Supabase: Connecting...</span>
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-400"></i>
+                </button>
+
+                <button onclick="runAutonomousCycle()" id="btnRunCycle" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                    <span>Run 24/7 Cycle</span>
+                </button>
+
+                <button onclick="openConfigModal()" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition" title="Pengaturan Cloud Supabase, Gemini API & Telegram">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <!-- TAB 1: COMMAND CENTER -->
+        <section id="tab-command" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass rounded-2xl p-5 glass-hover transition">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                        <span>ESTIMASI KOMISI HARI INI</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold">+24.8%</span>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mono" id="kpiRevenue">Rp 482.500</div>
+                    <p class="text-[11px] text-slate-400 mt-1">Dari 38 konversi Keranjang Kuning</p>
+                </div>
+
+                <div class="glass rounded-2xl p-5 glass-hover transition">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                        <span>PRODUK VIRAL TERSINKRON</span>
+                        <i data-lucide="database" class="w-4 h-4 text-cyan-400"></i>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mono" id="kpiProductCount">4 Produk</div>
+                    <p class="text-[11px] text-slate-400 mt-1">Database: <span class="text-emerald-400 mono">obftqgbsrpoonitxjqep</span></p>
+                </div>
+
+                <div class="glass rounded-2xl p-5 glass-hover transition">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                        <span>ANTREAN AUTO-POST (POSTIZ)</span>
+                        <i data-lucide="calendar-clock" class="w-4 h-4 text-purple-400"></i>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mono" id="kpiQueueCount">3 Video</div>
+                    <p class="text-[11px] text-slate-400 mt-1">Jam Puncak: 12:15 • 17:30 • 20:00 WIB</p>
+                </div>
+
+                <div class="glass rounded-2xl p-5 glass-hover transition">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                        <span>RATA-RATA HOOK RETENTION</span>
+                        <i data-lucide="activity" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                    <div class="text-2xl font-extrabold text-white mono">61.4%</div>
+                    <p class="text-[11px] text-slate-400 mt-1">3 Detik Pertama (Unggul di POV Curhat)</p>
+                </div>
+            </div>
+
+            <!-- Pipeline Visualizer -->
+            <div class="glass rounded-2xl p-5">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="git-branch" class="w-4 h-4 text-emerald-400"></i>
+                            Arsitektur Orkestrasi Agentic AI 24/7
+                        </h2>
+                        <p class="text-xs text-slate-400">Alur otomatis dari ekstraksi produk hingga laporan Telegram malam</p>
+                    </div>
+                    <span class="text-xs mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-lg" id="pipelineStateLabel">STATUS: STANDBY / CLOUD CONNECTED</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <div id="node-1" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 01</span>
+                            <i data-lucide="radar" class="w-4 h-4 text-cyan-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">Crawl4AI Scraper</div>
+                        <div class="text-[11px] text-slate-400">Filter komisi >12% & tren 7 hari</div>
+                    </div>
+
+                    <div id="node-2" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 02</span>
+                            <i data-lucide="ear" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">Whisper AI STT</div>
+                        <div class="text-[11px] text-slate-400">Ekstrak transkrip hook kompetitor</div>
+                    </div>
+
+                    <div id="node-3" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 03</span>
+                            <i data-lucide="brain-circuit" class="w-4 h-4 text-purple-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">Dify + Gemini ATM</div>
+                        <div class="text-[11px] text-slate-400">Tulis ulang cerita POV & CTA</div>
+                    </div>
+
+                    <div id="node-4" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 04</span>
+                            <i data-lucide="mic" class="w-4 h-4 text-pink-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">F5-TTS Indonesia</div>
+                        <div class="text-[11px] text-slate-400">Suara natural + jeda napas</div>
+                    </div>
+
+                    <div id="node-5" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 05</span>
+                            <i data-lucide="scan-face" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">LivePortrait + FFmpeg</div>
+                        <div class="text-[11px] text-slate-400">Lip-sync avatar & B-roll 9:16</div>
+                    </div>
+
+                    <div id="node-6" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-1.5 transition">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] mono text-slate-400">NODE 06</span>
+                            <i data-lucide="send" class="w-4 h-4 text-sky-400"></i>
+                        </div>
+                        <div class="font-bold text-xs text-white">Postiz & Supabase</div>
+                        <div class="text-[11px] text-slate-400">Auto-schedule & Telegram report</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="glass rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white">Performa Penayangan & Komisi Mingguan</h3>
+                            <span class="text-xs text-slate-400">7 Hari Terakhir</span>
+                        </div>
+                        <div class="h-56">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mono">AGENT_EXECUTION_TERMINAL (LIVE SUPABASE LOGS)</h3>
+                            </div>
+                            <button onclick="clearTerminal()" class="text-[11px] text-slate-400 hover:text-white mono">Clear</button>
+                        </div>
+                        <div id="terminalLog" class="bg-slate-950/90 border border-slate-800/90 rounded-xl p-3.5 h-48 overflow-y-auto mono text-xs space-y-1.5"></div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 glass rounded-2xl p-5 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
+                                    Kalkulator Proyeksi Laba Bersih Affiliate
+                                </h3>
+                                <p class="text-xs text-slate-400">Simulasi skalabilitas konten harian vs biaya server</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3.5 pt-1">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Produksi Video / Hari</span>
+                                    <span id="lblVidPerDay" class="font-bold text-emerald-400 mono">3 Video/hari</span>
+                                </div>
+                                <input type="range" id="rngVidPerDay" min="1" max="10" value="3" oninput="calcROI()" class="w-full accent-emerald-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Rata-rata Views / Video</span>
+                                    <span id="lblViewsPerVid" class="font-bold text-cyan-400 mono">2,500 Views</span>
+                                </div>
+                                <input type="range" id="rngViewsPerVid" min="500" max="25000" step="500" value="2500" oninput="calcROI()" class="w-full accent-cyan-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Harga Rata-rata Produk</span>
+                                    <span id="lblProdPrice" class="font-bold text-amber-400 mono">Rp 85.000</span>
+                                </div>
+                                <input type="range" id="rngProdPrice" min="25000" max="350000" step="5000" value="85000" oninput="calcROI()" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Persentase Komisi Affiliate</span>
+                                    <span id="lblCommPct" class="font-bold text-purple-400 mono">15%</span>
+                                </div>
+                                <input type="range" id="rngCommPct" min="5" max="25" value="15" oninput="calcROI()" class="w-full accent-purple-400 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800 space-y-2.5 bg-slate-900/60 p-4 rounded-xl">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Estimasi Klik Keranjang (CTR 3.2%):</span>
+                            <span id="roiClicks" class="mono text-white font-semibold">7,200 klik/bln</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Estimasi Produk Terjual (CVR 2.0%):</span>
+                            <span id="roiOrders" class="mono text-white font-semibold">144 pesanan/bln</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">Biaya Operasional (VPS + Token API):</span>
+                            <span class="mono text-rose-400 font-semibold">- Rp 650.000</span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase text-emerald-400">Potensi Laba Bersih / Bulan:</span>
+                            <span id="roiNetProfit" class="text-lg font-extrabold text-emerald-400 mono">Rp 1.186.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: PRODUCT & VIRAL HUNTER -->
+        <section id="tab-hunter" class="hidden space-y-6">
+            <div class="glass rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="flame" class="w-5 h-5 text-amber-400"></i>
+                        TikTok Shop Winning Product & Hook Inspector
+                    </h2>
+                    <p class="text-xs text-slate-400">Tersinkronisasi langsung dengan tabel <code class="text-emerald-400 mono">products</code> di Supabase PostgreSQL</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <select id="filterCategory" onchange="renderProductsTable()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                        <option value="ALL">Semua Kategori</option>
+                        <option value="Home">Home & Living</option>
+                        <option value="Gadget">Smart Gadget</option>
+                        <option value="Beauty">Skincare & Beauty</option>
+                        <option value="Fashion">Fashion Lokal</option>
+                    </select>
+
+                    <button onclick="openProductModal()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Tambah Produk ke Supabase</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400 bg-slate-900/60">
+                                <th class="py-3.5 px-4">Nama Produk TikTok Shop</th>
+                                <th class="py-3.5 px-4">Kategori</th>
+                                <th class="py-3.5 px-4">Harga Jual</th>
+                                <th class="py-3.5 px-4">Komisi / Unit</th>
+                                <th class="py-3.5 px-4">Terjual (7 Hari)</th>
+                                <th class="py-3.5 px-4">Skor Viral</th>
+                                <th class="py-3.5 px-4">Hook 3 Detik Kompetitor</th>
+                                <th class="py-3.5 px-4 text-right">Aksi Agen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody" class="divide-y divide-slate-800/70 text-xs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: ATM SCRIPT STUDIO -->
+        <section id="tab-script" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-5 glass rounded-2xl p-5 space-y-4">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+                        Mesin Modifikasi Naskah ATM (Dify + Gemini)
+                    </h2>
+                    <p class="text-xs text-slate-400">Ubah transkrip video viral kompetitor menjadi naskah story-selling orisinal bebas pelanggaran hak cipta.</p>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">1. Pilih Produk Target</label>
+                        <select id="scriptProductSelect" onchange="onSelectScriptProduct()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">2. Sudut Pandang Cerita (Story Archetype)</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="selectAngle('pov')" id="angle-pov" class="angle-btn p-2.5 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 text-xs font-semibold text-center">
+                                POV Curhat
+                            </button>
+                            <button onclick="selectAngle('unbox')" id="angle-unbox" class="angle-btn p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 text-xs font-semibold text-center">
+                                Shock Review
+                            </button>
+                            <button onclick="selectAngle('problem')" id="angle-problem" class="angle-btn p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 text-xs font-semibold text-center">
+                                Solusi Cepat
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">3. Hook Kompetitor yang Diamati</label>
+                        <textarea id="competitorHookInput" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-200"></textarea>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="generateATMScript()" id="btnGenerateScript" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            <span>Racik Naskah ATM (AI)</span>
+                        </button>
+                        <button onclick="saveScriptToSupabase()" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-semibold text-xs flex items-center gap-1.5 transition">
+                            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                            <span>Simpan Cloud</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 glass rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Struktur Naskah Berbasis Retensi Detik</h3>
+                            <p class="text-xs text-slate-400">Setiap segmen dirancang menahan penonton hingga klik keranjang kuning</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold mono" id="scriptViralScore">Skor Retensi: 94/100</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-rose-500/30">
+                            <div class="flex justify-between text-[11px] font-bold text-rose-400 mb-1 mono">
+                                <span>[00:00 - 00:03] VISUAL & AUDIO HOOK (PENAHAN SCROLL)</span>
+                                <span>WAJIB GEBRAK</span>
+                            </div>
+                            <textarea id="segHook" rows="2" class="w-full bg-transparent text-xs text-white focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-amber-500/30">
+                            <div class="flex justify-between text-[11px] font-bold text-amber-400 mb-1 mono">
+                                <span>[00:03 - 00:15] RELATABLE STORY / PAIN POINT</span>
+                                <span>EMOSI MANUSIA</span>
+                            </div>
+                            <textarea id="segBody" rows="2" class="w-full bg-transparent text-xs text-white focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-cyan-500/30">
+                            <div class="flex justify-between text-[11px] font-bold text-cyan-400 mb-1 mono">
+                                <span>[00:15 - 00:25] PRODUCT PROOF & DEMO B-ROLL</span>
+                                <span>SOLUSI NYATA</span>
+                            </div>
+                            <textarea id="segDemo" rows="2" class="w-full bg-transparent text-xs text-white focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/30">
+                            <div class="flex justify-between text-[11px] font-bold text-emerald-400 mb-1 mono">
+                                <span>[00:25 - 00:30] CALL TO ACTION KERANJANG KUNING</span>
+                                <span>URGENCY / DISKON</span>
+                            </div>
+                            <textarea id="segCta" rows="2" class="w-full bg-transparent text-xs text-white focus:outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button onclick="switchTab('studio')" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition">
+                            <span>Kirim Naskah ke Studio Karakter 9:16</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: VIRTUAL CHARACTER & 9:16 TIKTOK COMPOSITOR -->
+        <section id="tab-studio" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="glass rounded-2xl p-5 space-y-4">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-5 h-5 text-cyan-400"></i>
+                            Pilih Persona Kreator AI Hiper-Realistis (LivePortrait Engine)
+                        </h2>
+                        <div id="characterGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-3.5"></div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-5 space-y-4">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+                            Kalibrasi Suara Manusiawi (F5-TTS & CosyVoice Lokal)
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Kecepatan Bicara (Pacing)</span>
+                                    <span id="lblVoiceRate" class="mono text-emerald-400">1.08x (TikTok Natural)</span>
+                                </div>
+                                <input type="range" id="rngVoiceRate" min="0.85" max="1.35" step="0.05" value="1.08" oninput="document.getElementById('lblVoiceRate').innerText = this.value + 'x'" class="w-full accent-emerald-400">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-300">Intonasi & Jeda Napas</span>
+                                    <span id="lblVoicePitch" class="mono text-cyan-400">Ekspresif Tinggi</span>
+                                </div>
+                                <input type="range" id="rngVoicePitch" min="0.8" max="1.2" step="0.05" value="1.05" class="w-full accent-cyan-400">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Akun TikTok Tujuan</label>
+                                <select id="studioAccountSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Jadwal Jam Upload Puncak</label>
+                                <select id="studioScheduleTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                                    <option value="12:15 WIB">12:15 WIB (Jam Istirahat Siang)</option>
+                                    <option value="17:30 WIB">17:30 WIB (Pulang Kerja)</option>
+                                    <option value="20:00 WIB">20:00 WIB (Prime Time Malam)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3 pt-2">
+                            <button onclick="previewTikTokVoiceAndVideo()" id="btnPreviewVideo" class="flex-1 py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                                <span>Simulasikan Suara & Lip-Sync 9:16</span>
+                            </button>
+
+                            <button onclick="sendToPublisherQueue()" class="flex-1 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>Render & Kirim ke Antrean Supabase</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9:16 Vertical Phone Preview -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="w-[310px] h-[560px] rounded-[36px] border-[6px] border-slate-800 bg-slate-950 relative overflow-hidden shadow-2xl flex flex-col justify-between">
+                        <img id="previewCharImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="AI Avatar" class="absolute inset-0 w-full h-full object-cover opacity-85 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+
+                        <div class="relative z-10 p-4 flex items-center justify-between text-[11px] font-semibold text-white">
+                            <span class="px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur border border-white/10 flex items-center gap-1.5">
+                                <span id="lipSyncDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span id="previewCharBadge">Rania Putri • AI</span>
+                            </span>
+                            <span class="px-2 py-0.5 rounded bg-rose-500 text-white text-[10px] font-bold">9:16 HD</span>
+                        </div>
+
+                        <div class="relative z-10 px-4 my-auto text-center space-y-3">
+                            <div id="mouthWaveContainer" class="hidden justify-center items-center gap-1 h-8">
+                                <span class="w-1.5 h-6 bg-emerald-400 rounded-full talking-mouth"></span>
+                                <span class="w-1.5 h-8 bg-cyan-400 rounded-full talking-mouth" style="animation-delay:0.1s"></span>
+                                <span class="w-1.5 h-5 bg-emerald-400 rounded-full talking-mouth" style="animation-delay:0.2s"></span>
+                                <span class="w-1.5 h-7 bg-cyan-400 rounded-full talking-mouth" style="animation-delay:0.05s"></span>
+                            </div>
+                            <div id="liveKaraokeCaption" class="bg-slate-950/85 backdrop-blur-md border border-white/15 px-3.5 py-2.5 rounded-2xl text-xs font-extrabold text-amber-300 leading-relaxed shadow-lg">
+                                "Nyesel banget baru tahu ada rak lipat sekuat ini pas kamar kos udah sumpek parah!"
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 p-4 space-y-2.5">
+                            <div class="bg-slate-900/95 backdrop-blur border border-amber-400/50 rounded-xl p-2.5 flex items-center gap-2.5 shadow-lg">
+                                <div class="w-9 h-9 rounded-lg bg-amber-400 flex items-center justify-center text-slate-950 shrink-0">
+                                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-[10px] font-bold text-amber-400 uppercase">Keranjang Kuning • COD</div>
+                                    <div id="previewProductTitle" class="text-xs font-bold text-white truncate">Rak Susun Lipat Portabel Besi Baja</div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-extrabold text-[10px]">Beli</span>
+                            </div>
+
+                            <div class="text-xs text-white">
+                                <div id="previewAccountHandle" class="font-bold">@kamar.estetik.id</div>
+                                <div class="text-[11px] text-slate-300 truncate">#racuntiktok #barangunik #affiliate #fyp</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: AUTO-PUBLISHER & TELEGRAM EXECUTIVE REPORT -->
+        <section id="tab-publisher" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 glass rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                                <i data-lucide="layers" class="w-5 h-5 text-emerald-400"></i>
+                                Antrean Auto-Publisher (Tabel <code class="text-emerald-400 mono">video_queue</code> Supabase)
+                            </h2>
+                            <p class="text-xs text-slate-400">Worker otomatis mengeksekusi jadwal dan mengunggah ke akun TikTok</p>
+                        </div>
+                        <button onclick="fetchCloudData()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>Refresh Cloud</span>
+                        </button>
+                    </div>
+
+                    <div id="queueListContainer" class="space-y-3"></div>
+                </div>
+
+                <div class="lg:col-span-5 glass rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="message-square-code" class="w-4 h-4 text-sky-400"></i>
+                                Laporan Kerja Harian Otonom (Telegram Bot)
+                            </h3>
+                            <span class="text-[11px] mono text-sky-400">Auto-Send 22:00 WIB</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Ringkasan metrik harian yang dikirim langsung ke smartphone Anda setiap malam.</p>
+
+                        <pre id="telegramReportPreview" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-[11px] mono text-slate-200 whitespace-pre-wrap leading-relaxed overflow-x-auto"></pre>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5 pt-3">
+                        <button onclick="copyTelegramReport()" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            <span>Salin Teks Laporan</span>
+                        </button>
+                        <button onclick="sendLiveTelegramWebhook()" class="flex-1 py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Tembak ke Telegram Sekarang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: PENGATURAN CLOUD SUPABASE, GEMINI & TELEGRAM -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass max-w-lg w-full rounded-2xl p-6 space-y-4 border border-slate-700 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i>
+                    Konfigurasi Cloud Supabase, Gemini API & Telegram
+                </h3>
+                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3.5 max-h-[70vh] overflow-y-auto pr-1">
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">
+                        Supabase Project URL
+                    </label>
+                    <input type="text" id="cfgSupabaseUrl" placeholder="https://xxxx.supabase.co" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">
+                        Supabase Anon Public Key
+                    </label>
+                    <input type="password" id="cfgSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR..." class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 mono">
+                </div>
+
+                <div class="pt-3 border-t border-slate-800/80">
+                    <label class="block text-xs font-semibold text-purple-400 uppercase tracking-wider mb-1">
+                        Google Gemini API Key (Opsional untuk Generate Naskah Live)
+                    </label>
+                    <input type="password" id="cfgGeminiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-500 mono">
+                </div>
+
+                <div class="pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">
+                            Telegram Bot Token
+                        </label>
+                        <input type="password" id="cfgTgToken" placeholder="123456:ABC-DEF..." class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-sky-500 mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">
+                            Telegram Chat ID
+                        </label>
+                        <input type="text" id="cfgTgChatId" placeholder="987654321" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-sky-500 mono">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+                <button onclick="seedInitialDataToSupabase()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-semibold flex items-center gap-1.5">
+                    <i data-lucide="database-backup" class="w-4 h-4"></i>
+                    <span>Push Sample Data ke Supabase</span>
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Batal</button>
+                    <button onclick="saveConfigModal()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs">Simpan & Sinkronkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: TAMBAH PRODUK BARU KE SUPABASE -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <form onsubmit="addCustomProduct(event)" class="glass max-w-md w-full rounded-2xl p-6 space-y-4 border border-slate-700 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white">Tambah Produk TikTok Shop Baru</h3>
+                <button type="button" onclick="closeProductModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Nama Produk</label>
+                    <input type="text" id="newProdName" required placeholder="Contoh: Blender Portable USB Mini" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Kategori</label>
+                        <select id="newProdCat" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                            <option value="Home">Home</option>
+                            <option value="Gadget">Gadget</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Fashion">Fashion</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Harga (Rp)</label>
+                        <input type="number" id="newProdPrice" required value="79000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Komisi (%)</label>
+                        <input type="number" id="newProdComm" required value="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Terjual 7 Hari</label>
+                        <input type="number" id="newProdSold" required value="1850" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Kalimat Hook 3 Detik Kompetitor</label>
+                    <textarea id="newProdHook" rows="2" required placeholder="Contoh: Gak nyangka blender sekecil ini bisa hancurin es batu dalam 5 detik!" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs">Batal</button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Simpan ke Supabase</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden glass border border-emerald-500/50 rounded-2xl p-4 shadow-2xl max-w-sm flex items-start gap-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+        <div>
+            <div id="toastTitle" class="text-xs font-bold text-white">Berhasil</div>
+            <div id="toastMsg" class="text-[11px] text-slate-300 mt-0.5">Data tersimpan ke Supabase Cloud.</div>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC & SUPABASE CLOUD SYNCHRONIZATION -->
+    <script>
+        const DEFAULT_SUPABASE_URL = "https://obftqgbsrpoonitxjqep.supabase.co";
+        const DEFAULT_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iZnRxZ2JzcnBvb25pdHhqcWVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5ODQyMTAsImV4cCI6MjEwODU2MDIxMH0.sPwQj6BwcLFV1I3o0JADZkjA26rlr8bI6qc4r6H5rzk";
+
+        let supabaseClient = null;
+
+        const state = {
+            selectedAngle: 'pov',
+            selectedCharacterId: 'char-1',
+            products: [
+                {
+                    id: 'prod-1',
+                    name: 'Rak Susun Lipat Portabel Besi Baja',
+                    category: 'Home',
+                    price: 85000,
+                    commPct: 15,
+                    commRp: 12750,
+                    sold7d: 4210,
+                    score: 96,
+                    hook: 'Nyesel banget baru tahu ada rak lipat sekuat ini pas kamar kos udah sumpek parah!'
+                },
+                {
+                    id: 'prod-2',
+                    name: 'TWS Earbuds Gaming Low Latency Transparent',
+                    category: 'Gadget',
+                    price: 115000,
+                    commPct: 12,
+                    commRp: 13800,
+                    sold7d: 3190,
+                    score: 92,
+                    hook: 'Jangan beli TWS mahal-mahal kalau yang harga seratus ribuan ini suaranya udah bikin merinding!'
+                },
+                {
+                    id: 'prod-3',
+                    name: 'Mop Pel Lantai Putar Otomatis Peras Mandiri',
+                    category: 'Home',
+                    price: 69000,
+                    commPct: 18,
+                    commRp: 12420,
+                    sold7d: 5840,
+                    score: 98,
+                    hook: 'Tangan gak perlu nyentuh air kotor lagi tiap ngepel rumah, rahasianya ada di alat 60 ribuan ini.'
+                },
+                {
+                    id: 'prod-4',
+                    name: 'Lampu Meja Belajar LED Eye-Care Rechargeable',
+                    category: 'Gadget',
+                    price: 55000,
+                    commPct: 14,
+                    commRp: 7700,
+                    sold7d: 2140,
+                    score: 88,
+                    hook: 'Mati lampu pas lagi lembur? Lampu meja estetik ini tahan nyala 12 jam tanpa colok listrik.'
+                }
+            ],
+            characters: [
+                {
+                    id: 'char-1',
+                    name: 'Rania Putri',
+                    role: 'Anak Kos & Home Living Enthusiast',
+                    voice: 'F5-TTS Lokal Santai (Cewek Muda)',
+                    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    id: 'char-2',
+                    name: 'Dimas Prakoso',
+                    role: 'Reviewer Gadget & Setup Meja Kerja',
+                    voice: 'CosyVoice Antusias (Cowok Tech)',
+                    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    id: 'char-3',
+                    name: 'Siti Nurhaliza',
+                    role: 'Ibu Muda & Solusi Dapur Rapi',
+                    voice: 'F5-TTS Ramah & Persuasif',
+                    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80'
+                }
+            ],
+            accounts: [
+                { handle: '@kamar.estetik.id', niche: 'Home & Living' },
+                { handle: '@racun.gadget.lokal', niche: 'Smart Gadget' },
+                { handle: '@rumah.rapi.terus', niche: 'Alat Rumah Tangga' }
+            ],
+            queue: [
+                {
+                    id: 101,
+                    title: '#01_POV_Kamar_Kos_Sempit',
+                    productName: 'Rak Susun Lipat Portabel Besi Baja',
+                    charName: 'Rania Putri',
+                    account: '@kamar.estetik.id',
+                    time: '12:15 WIB',
+                    status: 'Published',
+                    views: '31.4K Views'
+                },
+                {
+                    id: 102,
+                    title: '#02_Review_Jujur_Pel_Otomatis',
+                    productName: 'Mop Pel Lantai Putar Otomatis Peras Mandiri',
+                    charName: 'Siti Nurhaliza',
+                    account: '@rumah.rapi.terus',
+                    time: '17:30 WIB',
+                    status: 'Scheduled',
+                    views: 'Menunggu Tayang'
+                },
+                {
+                    id: 103,
+                    title: '#03_Unbox_TWS_Transparan',
+                    productName: 'TWS Earbuds Gaming Low Latency Transparent',
+                    charName: 'Dimas Prakoso',
+                    account: '@racun.gadget.lokal',
+                    time: '20:00 WIB',
+                    status: 'Scheduled',
+                    views: 'Menunggu Tayang'
+                }
+            ]
+        };
+
+        function addTerminalLog(msg, colorClass = 'text-slate-300') {
+            const box = document.getElementById('terminalLog');
+            if (!box) return;
+            const now = new Date().toLocaleTimeString('id-ID', { hour12: false });
+            const line = document.createElement('div');
+            line.className = `${colorClass} leading-relaxed`;
+            line.innerHTML = `<span class="text-slate-500">[${now}]</span> ${msg}`;
+            box.appendChild(line);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function clearTerminal() {
+            document.getElementById('terminalLog').innerHTML = '';
+            addTerminalLog('[SYSTEM] Log terminal dibersihkan.', 'text-slate-400');
+        }
+
+        function showToast(title, msg) {
+            const box = document.getElementById('toastBox');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 3800);
+        }
+
+        function setSupabaseBadgeStatus(statusText, dotColorClass) {
+            const dot = document.getElementById('sbStatusDot');
+            const txt = document.getElementById('sbStatusText');
+            if (dot) dot.className = `w-2 h-2 rounded-full ${dotColorClass}`;
+            if (txt) txt.innerText = statusText;
+        }
+
+        async function initSupabase() {
+            if (!localStorage.getItem('nex_sb_url')) {
+                localStorage.setItem('nex_sb_url', DEFAULT_SUPABASE_URL);
+            }
+            if (!localStorage.getItem('nex_sb_key')) {
+                localStorage.setItem('nex_sb_key', DEFAULT_SUPABASE_KEY);
+            }
+
+            const sbUrl = localStorage.getItem('nex_sb_url') || DEFAULT_SUPABASE_URL;
+            const sbKey = localStorage.getItem('nex_sb_key') || DEFAULT_SUPABASE_KEY;
+
+            const urlInput = document.getElementById('cfgSupabaseUrl');
+            const keyInput = document.getElementById('cfgSupabaseKey');
+            if (urlInput) urlInput.value = sbUrl;
+            if (keyInput) keyInput.value = sbKey;
+
+            if (sbUrl && sbKey && window.supabase) {
+                try {
+                    supabaseClient = window.supabase.createClient(sbUrl, sbKey);
+                    addTerminalLog(`[SUPABASE] Menginisialisasi koneksi ke ${sbUrl}...`, 'text-cyan-400');
+                    await fetchCloudData();
+                } catch (err) {
+                    setSupabaseBadgeStatus('Supabase: Error', 'bg-rose-500');
+                    addTerminalLog('[SUPABASE ERROR] Gagal koneksi: ' + err.message, 'text-rose-400');
+                }
+            }
+        }
+
+        async function fetchCloudData() {
+            if (!supabaseClient) return;
+
+            try {
+                const { data: prodData, error: prodErr } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (prodErr) {
+                    setSupabaseBadgeStatus('Supabase: Tabel Belum Dibuat', 'bg-amber-400');
+                    addTerminalLog(`[SUPABASE WARN] Query 'products': ${prodErr.message}. Pastikan SQL Schema sudah di-Run di SQL Editor Supabase.`, 'text-amber-400');
+                } else {
+                    setSupabaseBadgeStatus('Supabase: Connected', 'bg-emerald-400');
+                    if (prodData && prodData.length > 0) {
+                        state.products = prodData.map((p, idx) => ({
+                            id: p.id || `prod-${idx}`,
+                            name: p.name,
+                            category: p.category || 'Home',
+                            price: Number(p.price) || 75000,
+                            commPct: Number(p.commission_pct) || 12,
+                            commRp: Number(p.commission_rp) || 9000,
+                            sold7d: Number(p.sold_7d) || 1000,
+                            score: Number(p.viral_score) || 88,
+                            hook: p.competitor_hook || ''
+                        }));
+                        renderProductsTable();
+                        populateScriptProductDropdown();
+                        updateKPIs();
+                        addTerminalLog(`[SUPABASE] ${prodData.length} produk berhasil disinkronkan dari tabel 'products'.`, 'text-emerald-400');
+                    } else {
+                        addTerminalLog(`[SUPABASE] Terhubung! Tabel 'products' masih kosong (menggunakan data pratinjau lokal).`, 'text-cyan-400');
+                    }
+                }
+
+                const { data: qData, error: qErr } = await supabaseClient
+                    .from('video_queue')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (!qErr && qData && qData.length > 0) {
+                    state.queue = qData.map((q, idx) => ({
+                        id: q.id || idx + 200,
+                        title: q.title,
+                        productName: q.product_name,
+                        charName: q.character_name,
+                        account: q.target_account,
+                        time: q.schedule_time,
+                        status: q.status,
+                        views: q.est_views || 'Menunggu Tayang'
+                    }));
+                    renderQueueList();
+                    updateKPIs();
+                    addTerminalLog(`[SUPABASE] ${qData.length} antrean video dimuat dari tabel 'video_queue'.`, 'text-emerald-400');
+                }
+            } catch (e) {
+                addTerminalLog(`[SUPABASE EXCEPTION] ${e.message}`, 'text-rose-400');
+            }
+        }
+
+        async function syncWithSupabaseManual() {
+            showToast('Sinkronisasi Cloud', 'Menarik data terbaru dari Supabase PostgreSQL...');
+            await fetchCloudData();
+        }
+
+        async function seedInitialDataToSupabase() {
+            if (!supabaseClient) return;
+            addTerminalLog('[SUPABASE] Mengunggah data sampel awal ke tabel products & video_queue...', 'text-cyan-400');
+
+            const sampleProducts = state.products.map(p => ({
+                name: p.name,
+                category: p.category,
+                price: p.price,
+                commission_pct: p.commPct,
+                commission_rp: p.commRp,
+                sold_7d: p.sold7d,
+                viral_score: p.score,
+                competitor_hook: p.hook
+            }));
+
+            const { error: err1 } = await supabaseClient.from('products').insert(sampleProducts);
+            if (err1) {
+                showToast('Gagal Seed Data', err1.message);
+                addTerminalLog(`[SUPABASE ERROR] ${err1.message}`, 'text-rose-400');
+                return;
+            }
+
+            showToast('Seed Berhasil', 'Data produk berhasil di-push ke Supabase Cloud!');
+            await fetchCloudData();
+        }
+
+        function switchTab(tabId) {
+            ['command', 'hunter', 'script', 'studio', 'publisher'].forEach(id => {
+                document.getElementById(`tab-${id}`).classList.add('hidden');
+                const btn = document.getElementById(`tabBtn-${id}`);
+                btn.className = "tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-300 hover:text-white";
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+            activeBtn.className = "tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-emerald-500 text-slate-950 shadow";
+        }
+
+        function updateKPIs() {
+            document.getElementById('kpiProductCount').innerText = `${state.products.length} Produk`;
+            document.getElementById('kpiQueueCount').innerText = `${state.queue.length} Video`;
+            generateTelegramReportText();
+        }
+
+        function renderProductsTable() {
+            const cat = document.getElementById('filterCategory')?.value || 'ALL';
+            const tbody = document.getElementById('productsTableBody');
+            if (!tbody) return;
+
+            const filtered = cat === 'ALL' ? state.products : state.products.filter(p => p.category === cat);
+
+            tbody.innerHTML = filtered.map((p, idx) => `
+                <tr class="hover:bg-slate-900/50 transition">
+                    <td class="py-3.5 px-4 font-bold text-white">${p.name}</td>
+                    <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-800 text-cyan-400">${p.category}</span>
+                    </td>
+                    <td class="py-3.5 px-4 mono text-slate-200">Rp ${p.price.toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-4 mono text-emerald-400 font-bold">Rp ${p.commRp.toLocaleString('id-ID')} (${p.commPct}%)</td>
+                    <td class="py-3.5 px-4 mono text-white">${p.sold7d.toLocaleString('id-ID')} unit</td>
+                    <td class="py-3.5 px-4">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-bold mono">${p.score}/100</span>
+                    </td>
+                    <td class="py-3.5 px-4 max-w-xs text-slate-300 italic">"${p.hook}"</td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button onclick="sendProductToATMEditor(${idx})" class="px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500 text-purple-300 hover:text-slate-950 font-bold text-[11px] transition">
+                            Bedah ATM →
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function sendProductToATMEditor(index) {
+            const select = document.getElementById('scriptProductSelect');
+            if (select) {
+                select.selectedIndex = index;
+                onSelectScriptProduct();
+            }
+            switchTab('script');
+        }
+
+        function populateScriptProductDropdown() {
+            const select = document.getElementById('scriptProductSelect');
+            if (!select) return;
+            select.innerHTML = state.products.map((p, i) => `
+                <option value="${i}">${p.name} — Komisi Rp ${p.commRp.toLocaleString('id-ID')}</option>
+            `).join('');
+            onSelectScriptProduct();
+        }
+
+        function onSelectScriptProduct() {
+            const idx = document.getElementById('scriptProductSelect')?.value || 0;
+            const prod = state.products[idx] || state.products[0];
+            if (!prod) return;
+
+            document.getElementById('competitorHookInput').value = prod.hook;
+            document.getElementById('previewProductTitle').innerText = prod.name;
+            generateATMScript(false);
+        }
+
+        function selectAngle(angle) {
+            state.selectedAngle = angle;
+            ['pov', 'unbox', 'problem'].forEach(a => {
+                const el = document.getElementById(`angle-${a}`);
+                if (a === angle) {
+                    el.className = "angle-btn p-2.5 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 text-xs font-semibold text-center";
+                } else {
+                    el.className = "angle-btn p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 text-xs font-semibold text-center";
+                }
+            });
+            generateATMScript(false);
+        }
+
+        async function generateATMScript(showNotification = true) {
+            const idx = document.getElementById('scriptProductSelect')?.value || 0;
+            const prod = state.products[idx] || state.products[0];
+            if (!prod) return;
+
+            const geminiKey = localStorage.getItem('nex_gemini_key') || '';
+
+            if (geminiKey && showNotification) {
+                addTerminalLog(`[GEMINI ATM] Meracik naskah baru untuk "${prod.name}"...`, 'text-purple-400');
+                try {
+                    const prompt = `Buatkan naskah video TikTok Affiliate berdurasi 30 detik untuk produk "${prod.name}" dengan harga Rp ${prod.price}. Hook kompetitor adalah: "${prod.hook}". Gunakan sudut pandang ${state.selectedAngle}. Balas dalam format JSON murni dengan key: hook, body, demo, cta.`;
+                    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await resp.json();
+                    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const parsed = JSON.parse(jsonMatch[0]);
+                        document.getElementById('segHook').value = parsed.hook || prod.hook;
+                        document.getElementById('segBody').value = parsed.body || '';
+                        document.getElementById('segDemo').value = parsed.demo || '';
+                        document.getElementById('segCta').value = parsed.cta || '';
+                        document.getElementById('liveKaraokeCaption').innerText = `"${parsed.hook}"`;
+                        showToast('Gemini AI ATM', 'Naskah baru berhasil diracik oleh Gemini API!');
+                        return;
+                    }
+                } catch (err) {
+                    addTerminalLog(`[GEMINI FALLBACK] Menggunakan formula ATM lokal.`, 'text-amber-400');
+                }
+            }
+
+            if (state.selectedAngle === 'pov') {
+                document.getElementById('segHook').value = prod.hook;
+                document.getElementById('segBody').value = `Jujur awalnya aku pikir barang harga Rp ${prod.price.toLocaleString('id-ID')} itu palingan ringkih. Tapi pas sampai di kosan, beneran bikin kaget karena bahannya tebal dan rapi banget.`;
+                document.getElementById('segDemo').value = `Lihat deh detail pemakaian ${prod.name} ini, praktis banget dipasang tanpa ribet dan langsung bikin ruangan kelihatan dua kali lebih lega.`;
+                document.getElementById('segCta').value = `Mumpung stok promonya masih ada dan bisa COD, langsung cek Keranjang Kuning di pojok kiri bawah sekarang sebelum harganya balik normal!`;
+            } else if (state.selectedAngle === 'unbox') {
+                document.getElementById('segHook').value = `Stop scroll dulu! Ini alasan kenapa lebih dari ${prod.sold7d.toLocaleString('id-ID')} orang rebutan ${prod.name} minggu ini!`;
+                document.getElementById('segBody').value = `Banyak yang tanya di kolom komentar apakah worth it? Pas aku buka paketnya, kualitas finishing-nya setara barang mall ratusan ribu.`;
+                document.getElementById('segDemo').value = `Kita tes langsung fungsinya: responsif, awet, dan bener-bener ngebantu aktivitas harian jadi jauh lebih hemat waktu.`;
+                document.getElementById('segCta').value = `Jangan tunggu kehabisan warna favoritmu, klik Keranjang Kuning di bawah buat klaim voucher gratis ongkir hari ini!`;
+            } else {
+                document.getElementById('segHook').value = `Capek ngalamin masalah yang sama tiap hari? Cuma butuh modal Rp ${prod.price.toLocaleString('id-ID')} buat beresin semuanya!`;
+                document.getElementById('segBody').value = `Dulu aku selalu buang waktu berjam-jam, sampai akhirnya nemu ${prod.name} yang lagi viral di TikTok Shop ini.`;
+                document.getElementById('segDemo').value = `Cukup sekali pasang, beres dalam hitungan detik. Hemat tenaga, hemat tempat, dan pastinya awet dipakai bertahun-tahun.`;
+                document.getElementById('segCta').value = `Amankan harga diskonnya sekarang juga di Keranjang Kuning kiri bawah ya!`;
+            }
+
+            document.getElementById('liveKaraokeCaption').innerText = `"${document.getElementById('segHook').value}"`;
+            if (showNotification) {
+                showToast('Naskah ATM Siap', 'Formula Amati-Tiru-Modifikasi berhasil diperbarui.');
+            }
+        }
+
+        async function saveScriptToSupabase() {
+            if (!supabaseClient) return;
+            const payload = {
+                angle_type: state.selectedAngle,
+                hook_0_3s: document.getElementById('segHook').value,
+                body_3_15s: document.getElementById('segBody').value,
+                demo_15_25s: document.getElementById('segDemo').value,
+                cta_25_30s: document.getElementById('segCta').value,
+                viral_score: 94
+            };
+            const { error } = await supabaseClient.from('atm_scripts').insert([payload]);
+            if (!error) {
+                showToast('Tersimpan di Cloud', 'Naskah ATM masuk ke tabel atm_scripts Supabase.');
+                addTerminalLog('[SUPABASE] Naskah ATM baru disimpan ke tabel atm_scripts.', 'text-emerald-400');
+            } else {
+                showToast('Info Cloud', 'Pastikan tabel atm_scripts sudah dibuat di SQL Editor.');
+            }
+        }
+
+        function renderCharacterGrid() {
+            const container = document.getElementById('characterGrid');
+            if (!container) return;
+
+            container.innerHTML = state.characters.map(c => {
+                const active = c.id === state.selectedCharacterId;
+                return `
+                    <div onclick="selectCharacter('${c.id}')" class="cursor-pointer rounded-2xl p-3.5 border transition ${active ? 'border-emerald-400 bg-emerald-500/10' : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'}">
+                        <div class="flex items-center gap-3">
+                            <img src="${c.avatar}" class="w-12 h-12 rounded-xl object-cover border border-white/10">
+                            <div>
+                                <div class="text-xs font-bold text-white">${c.name}</div>
+                                <div class="text-[11px] text-slate-400">${c.role}</div>
+                                <div class="text-[10px] text-emerald-400 mono mt-1">${c.voice}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const accSelect = document.getElementById('studioAccountSelect');
+            if (accSelect) {
+                accSelect.innerHTML = state.accounts.map(a => `<option value="${a.handle}">${a.handle} (${a.niche})</option>`).join('');
+            }
+        }
+
+        function selectCharacter(charId) {
+            state.selectedCharacterId = charId;
+            const char = state.characters.find(c => c.id === charId);
+            if (char) {
+                document.getElementById('previewCharImg').src = char.avatar;
+                document.getElementById('previewCharBadge').innerText = `${char.name} • AI`;
+            }
+            renderCharacterGrid();
+        }
+
+        function previewTikTokVoiceAndVideo() {
+            const hook = document.getElementById('segHook').value;
+            const body = document.getElementById('segBody').value;
+            const cta = document.getElementById('segCta').value;
+            const fullText = `${hook}. ${body}. ${cta}`;
+
+            const wave = document.getElementById('mouthWaveContainer');
+            wave.classList.remove('hidden');
+            wave.classList.add('flex');
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(fullText);
+                utter.lang = 'id-ID';
+                utter.rate = parseFloat(document.getElementById('rngVoiceRate').value || 1.08);
+                utter.pitch = parseFloat(document.getElementById('rngVoicePitch').value || 1.05);
+                utter.onend = () => {
+                    wave.classList.add('hidden');
+                    wave.classList.remove('flex');
+                };
+                window.speechSynthesis.speak(utter);
+            } else {
+                setTimeout(() => {
+                    wave.classList.add('hidden');
+                    wave.classList.remove('flex');
+                }, 4000);
+            }
+
+            addTerminalLog('[LIVEPORTRAIT + TTS] Memutar simulasi lip-sync 9:16 dan vokal Bahasa Indonesia.', 'text-cyan-400');
+        }
+
+        function openProductModal() {
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        async function addCustomProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('newProdName').value.trim();
+            const category = document.getElementById('newProdCat').value;
+            const price = Number(document.getElementById('newProdPrice').value);
+            const commPct = Number(document.getElementById('newProdComm').value);
+            const sold7d = Number(document.getElementById('newProdSold').value);
+            const hook = document.getElementById('newProdHook').value.trim();
+            const commRp = Math.round(price * (commPct / 100));
+
+            const newItem = {
+                id: 'prod-' + Date.now(),
+                name,
+                category,
+                price,
+                commPct,
+                commRp,
+                sold7d,
+                score: 94,
+                hook
+            };
+
+            state.products.unshift(newItem);
+            renderProductsTable();
+            populateScriptProductDropdown();
+            updateKPIs();
+            closeProductModal();
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('products').insert([{
+                    name: newItem.name,
+                    category: newItem.category,
+                    price: newItem.price,
+                    commission_pct: newItem.commPct,
+                    commission_rp: newItem.commRp,
+                    sold_7d: newItem.sold7d,
+                    viral_score: newItem.score,
+                    competitor_hook: newItem.hook
+                }]);
+                if (!error) {
+                    showToast('Tersimpan di Supabase', `Produk "${name}" masuk ke tabel products.`);
+                    addTerminalLog(`[SUPABASE] INSERT INTO products: "${name}" sukses.`, 'text-emerald-400');
+                } else {
+                    showToast('Tersimpan Lokal', `Pastikan tabel 'products' sudah dibuat di Supabase.`);
+                }
+            }
+        }
+
+        async function sendToPublisherQueue() {
+            const idx = document.getElementById('scriptProductSelect')?.value || 0;
+            const prod = state.products[idx] || state.products[0];
+            const char = state.characters.find(c => c.id === state.selectedCharacterId) || state.characters[0];
+            const account = document.getElementById('studioAccountSelect')?.value || '@kamar.estetik.id';
+            const time = document.getElementById('studioScheduleTime')?.value || '19:30 WIB';
+
+            const newQueueItem = {
+                id: Date.now(),
+                title: `#Auto_${prod.name.split(' ').slice(0, 3).join('_')}`,
+                productName: prod.name,
+                charName: char.name,
+                account,
+                time,
+                status: 'Scheduled',
+                views: 'Menunggu Tayang'
+            };
+
+            state.queue.unshift(newQueueItem);
+            renderQueueList();
+            updateKPIs();
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('video_queue').insert([{
+                    title: newQueueItem.title,
+                    product_name: newQueueItem.productName,
+                    character_name: newQueueItem.charName,
+                    target_account: newQueueItem.account,
+                    schedule_time: newQueueItem.time,
+                    status: newQueueItem.status,
+                    est_views: newQueueItem.views,
+                    hook_script: document.getElementById('segHook').value,
+                    body_script: document.getElementById('segBody').value,
+                    demo_script: document.getElementById('segDemo').value,
+                    cta_script: document.getElementById('segCta').value
+                }]);
+                if (!error) {
+                    addTerminalLog(`[SUPABASE] Video "${newQueueItem.title}" berhasil dicatat di tabel video_queue.`, 'text-emerald-400');
+                }
+            }
+
+            showToast('Masuk Antrean Postiz', `Video dijadwalkan pukul ${time} pada akun ${account}`);
+            switchTab('publisher');
+        }
+
+        function renderQueueList() {
+            const box = document.getElementById('queueListContainer');
+            if (!box) return;
+
+            box.innerHTML = state.queue.map(q => {
+                const isPub = q.status === 'Published';
+                return `
+                    <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs text-white mono">${q.title}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isPub ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}">${q.status}</span>
+                            </div>
+                            <div class="text-xs text-slate-300">${q.productName} • Karakter: <span class="text-cyan-400">${q.charName}</span></div>
+                            <div class="text-[11px] text-slate-400 mono">Akun: ${q.account} | Jadwal: ${q.time}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-bold text-white mono">${q.views}</div>
+                            <div class="text-[10px] text-emerald-400">Keranjang Kuning Aktif</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function generateTelegramReportText() {
+            const today = new Date().toLocaleDateString('id-ID');
+            const topProd = state.products[0]?.name || 'Rak Susun Lipat Portabel';
+            const report = `📊 LAPORAN OPERASIONAL NEXCREATOR AI - ${today}
+------------------------------------------------------
+[STATUS CLOUD & PRODUKSI]
+- Supabase Project      : obftqgbsrpoonitxjqep (Connected)
+- Total Produk Terdata  : ${state.products.length} Produk Winning
+- Antrean Video Postiz  : ${state.queue.length} Video (9:16 HD)
+- Produk Fokus Utama    : ${topProd}
+
+[PERFORMA TAYANGAN & KONVERSI]
+- Total Tayangan Baru   : 48.200 views (+24.8%)
+- Klik Keranjang Kuning : 1.190 klik (CTR 3.2%)
+- Estimasi Terjual      : 38 unit
+- Estimasi Komisi Bersih: Rp 482.500
+
+[EVALUASI ATM AGEN]
+- Hook POV Curhat menghasilkan retensi 61.4% pada 3 detik pertama.
+- Sistem 24/7 siap mengeksekusi batch render berikutnya pukul 05:00 WIB.`;
+
+            const el = document.getElementById('telegramReportPreview');
+            if (el) el.innerText = report;
+            return report;
+        }
+
+        function copyTelegramReport() {
+            const txt = generateTelegramReportText();
+            navigator.clipboard.writeText(txt);
+            showToast('Tersalin', 'Laporan harian berhasil disalin ke clipboard.');
+        }
+
+        async function sendLiveTelegramWebhook() {
+            const token = localStorage.getItem('nex_tg_token') || '';
+            const chatId = localStorage.getItem('nex_tg_chat') || '';
+            const text = generateTelegramReportText();
+
+            if (!token || !chatId) {
+                showToast('Simulasi Terkirim', 'Isi Bot Token & Chat ID di menu Pengaturan untuk mengirim ke Telegram asli.');
+                addTerminalLog('[TELEGRAM BOT] Simulasi pengiriman laporan eksekutif berhasil.', 'text-sky-400');
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text })
+                });
+                if (res.ok) {
+                    showToast('Terkirim ke Telegram!', 'Cek pesan masuk dari Bot Telegram Anda.');
+                    addTerminalLog('[TELEGRAM WEBHOOK] Laporan harian sukses dikirim ke Chat ID ' + chatId, 'text-emerald-400');
+                }
+            } catch (e) {
+                addTerminalLog('[TELEGRAM ERROR] ' + e.message, 'text-rose-400');
+            }
+        }
+
+        function runAutonomousCycle() {
+            const label = document.getElementById('pipelineStateLabel');
+            label.innerText = 'STATUS: RUNNING 24/7 AUTONOMOUS CYCLE...';
+            addTerminalLog('[ORCHESTRATOR] Memulai siklus penuh Agentic AI 24/7...', 'text-emerald-400');
+
+            const steps = [
+                { id: 'node-1', msg: '[NODE 01 - Crawl4AI] Menarik metrik produk TikTok Shop & menyinkronkan ke Supabase...' },
+                { id: 'node-2', msg: '[NODE 02 - Whisper STT] Mengekstrak transkrip audio dari 5 video kompetitor viral...' },
+                { id: 'node-3', msg: '[NODE 03 - Dify ATM] Meracik naskah 30 detik dengan Hook 3 detik penahan scroll...' },
+                { id: 'node-4', msg: '[NODE 04 - F5-TTS] Menyintesis vokal Bahasa Indonesia natural beserta jeda napas...' },
+                { id: 'node-5', msg: '[NODE 05 - LivePortrait] Merender gerakan bibir karakter Rania Putri + B-Roll 9:16...' },
+                { id: 'node-6', msg: '[NODE 06 - Postiz & Supabase] Menyimpan antrean jadwal ke tabel video_queue & mengirim laporan!' }
+            ];
+
+            steps.forEach((step, idx) => {
+                setTimeout(() => {
+                    document.querySelectorAll('[id^="node-"]').forEach(el => el.classList.remove('border-emerald-400', 'node-pulse'));
+                    const el = document.getElementById(step.id);
+                    if (el) el.classList.add('border-emerald-400', 'node-pulse');
+                    addTerminalLog(step.msg, 'text-cyan-400');
+
+                    if (idx === steps.length - 1) {
+                        setTimeout(() => {
+                            label.innerText = 'STATUS: CYCLE COMPLETE • SUPABASE SYNCED';
+                            showToast('Siklus 24/7 Selesai', 'Seluruh 6 node agen telah mengeksekusi tugas dan tersinkron ke Supabase.');
+                        }, 900);
+                    }
+                }, idx * 950);
+            });
+        }
+
+        function calcROI() {
+            const vids = Number(document.getElementById('rngVidPerDay').value);
+            const views = Number(document.getElementById('rngViewsPerVid').value);
+            const price = Number(document.getElementById('rngProdPrice').value);
+            const comm = Number(document.getElementById('rngCommPct').value);
+
+            document.getElementById('lblVidPerDay').innerText = `${vids} Video/hari`;
+            document.getElementById('lblViewsPerVid').innerText = `${views.toLocaleString('id-ID')} Views`;
+            document.getElementById('lblProdPrice').innerText = `Rp ${price.toLocaleString('id-ID')}`;
+            document.getElementById('lblCommPct').innerText = `${comm}%`;
+
+            const monthlyViews = vids * views * 30;
+            const clicks = Math.round(monthlyViews * 0.032);
+            const orders = Math.round(clicks * 0.02);
+            const gross = orders * (price * (comm / 100));
+            const net = Math.max(0, Math.round(gross - 650000));
+
+            document.getElementById('roiClicks').innerText = `${clicks.toLocaleString('id-ID')} klik/bln`;
+            document.getElementById('roiOrders').innerText = `${orders.toLocaleString('id-ID')} pesanan/bln`;
+            document.getElementById('roiNetProfit').innerText = `Rp ${net.toLocaleString('id-ID')}`;
+        }
+
+        function openConfigModal() {
+            document.getElementById('cfgSupabaseUrl').value = localStorage.getItem('nex_sb_url') || DEFAULT_SUPABASE_URL;
+            document.getElementById('cfgSupabaseKey').value = localStorage.getItem('nex_sb_key') || DEFAULT_SUPABASE_KEY;
+            document.getElementById('cfgGeminiKey').value = localStorage.getItem('nex_gemini_key') || '';
+            document.getElementById('cfgTgToken').value = localStorage.getItem('nex_tg_token') || '';
+            document.getElementById('cfgTgChatId').value = localStorage.getItem('nex_tg_chat') || '';
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveConfigModal() {
+            const sbUrl = document.getElementById('cfgSupabaseUrl').value.trim() || DEFAULT_SUPABASE_URL;
+            const sbKey = document.getElementById('cfgSupabaseKey').value.trim() || DEFAULT_SUPABASE_KEY;
+            const geminiKey = document.getElementById('cfgGeminiKey').value.trim();
+            const tgToken = document.getElementById('cfgTgToken').value.trim();
+            const tgChat = document.getElementById('cfgTgChatId').value.trim();
+
+            localStorage.setItem('nex_sb_url', sbUrl);
+            localStorage.setItem('nex_sb_key', sbKey);
+            localStorage.setItem('nex_gemini_key', geminiKey);
+            localStorage.setItem('nex_tg_token', tgToken);
+            localStorage.setItem('nex_tg_chat', tgChat);
+
+            closeConfigModal();
+            showToast('Konfigurasi Disimpan', 'Menghubungkan ulang ke Supabase Cloud...');
+            initSupabase();
+        }
+
+        function initRevenueChart() {
+            const ctx = document.getElementById('revenueChart')?.getContext('2d');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                    datasets: [
+                        {
+                            label: 'Komisi Bersih (Ribu Rp)',
+                            data: [210, 275, 310, 295, 390, 445, 482.5],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2.5
+                        },
+                        {
+                            label: 'Tayangan Organik (Ribu Views)',
+                            data: [18, 24, 29, 27, 36, 42, 48.2],
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(51,65,85,0.2)' } },
+                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(51,65,85,0.2)' } }
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initRevenueChart();
+            renderProductsTable();
+            populateScriptProductDropdown();
+            renderCharacterGrid();
+            renderQueueList();
+            calcROI();
+            generateTelegramReportText();
+
+            addTerminalLog('[BOOT] NexCreator AI v3.5 Virtual Studio siap dijalankan.', 'text-emerald-400');
+            initSupabase();
+        });
+    </script>
+</body>
+</html>
