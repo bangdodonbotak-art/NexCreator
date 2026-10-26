@@ -111,12 +111,12 @@ function initFx() {
     requestAnimationFrame(frame);
     if (!S.prefs.fx || document.hidden || ts - last < 60) return;
     last = ts;
-    x.fillStyle = 'rgba(5,1,15,.14)'; x.fillRect(0, 0, w, h);
+    x.fillStyle = 'rgba(245,248,255,.2)'; x.fillRect(0, 0, w, h);
     x.font = size + 'px JetBrains Mono';
     for (let i = 0; i < cols; i++) {
       if (i % 3) continue;
       const ch = glyphs[Math.random() * glyphs.length | 0];
-      x.fillStyle = Math.random() > .93 ? '#ff2bd6' : '#00f0ff';
+      x.fillStyle = Math.random() > .93 ? '#0ea5e9' : '#2563eb';
       x.fillText(ch, i * size, drops[i] * size);
       if (drops[i] * size > h && Math.random() > .975) drops[i] = 0;
       drops[i] += .6;
@@ -260,7 +260,7 @@ function calcRoi() {
 
 /* ---------- Charts ---------- */
 const charts = {};
-const gridC = 'rgba(0,240,255,.08)', tickC = '#8e88b8';
+const gridC = 'rgba(37,99,235,.1)', tickC = '#5b6b94';
 function mk(id, cfg) { const el = $('#' + id); if (!el || !window.Chart) return; charts[id]?.destroy(); charts[id] = new Chart(el.getContext('2d'), cfg); }
 function last7() {
   const base = kpis().revenue || 1200000;
@@ -270,13 +270,13 @@ function last7() {
 function renderChart() {
   const d = last7();
   const g = $('#revChart').getContext('2d').createLinearGradient(0, 0, 0, 240);
-  g.addColorStop(0, 'rgba(0,240,255,.4)'); g.addColorStop(1, 'rgba(0,240,255,0)');
+  g.addColorStop(0, 'rgba(37,99,235,.3)'); g.addColorStop(1, 'rgba(37,99,235,0)');
   mk('revChart', {
     type: 'line',
     data: {
       labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], datasets: [
-        { label: 'Komisi (rb Rp)', data: d.rev, borderColor: '#00f0ff', backgroundColor: g, fill: true, tension: .4, borderWidth: 2.5, pointBackgroundColor: '#00f0ff' },
-        { label: 'Views (rb)', data: d.views, borderColor: '#ff2bd6', borderDash: [6, 5], tension: .4, borderWidth: 2, pointRadius: 3 }
+        { label: 'Komisi (rb Rp)', data: d.rev, borderColor: '#2563eb', backgroundColor: g, fill: true, tension: .4, borderWidth: 2.5, pointBackgroundColor: '#2563eb' },
+        { label: 'Views (rb)', data: d.views, borderColor: '#0ea5e9', borderDash: [6, 5], tension: .4, borderWidth: 2, pointRadius: 3 }
       ]
     },
     options: { responsive: true, maintainAspectRatio: false, animation: { duration: 900 }, plugins: { legend: { labels: { color: tickC, font: { size: 11 } } } }, scales: { x: { ticks: { color: tickC }, grid: { color: gridC } }, y: { ticks: { color: tickC }, grid: { color: gridC } } } }
@@ -285,16 +285,16 @@ function renderChart() {
 function renderAnalytics() {
   const cats = {}; S.products.forEach(p => { cats[p.category] = (cats[p.category] || 0) + commRp(p) * p.sold7d; });
   mk('catChart', {
-    type: 'bar', data: { labels: Object.keys(cats), datasets: [{ label: 'Potensi komisi 7 hari', data: Object.values(cats), backgroundColor: ['#00f0ff', '#ff2bd6', '#fcee0a', '#39ff88', '#8b5cf6'], borderWidth: 0 }] },
+    type: 'bar', data: { labels: Object.keys(cats), datasets: [{ label: 'Potensi komisi 7 hari', data: Object.values(cats), backgroundColor: ['#2563eb', '#0ea5e9', '#1e40af', '#60a5fa', '#4f46e5'], borderWidth: 0 }] },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => rp(c.parsed.y) } } }, scales: { x: { ticks: { color: tickC }, grid: { display: false } }, y: { ticks: { color: tickC, callback: v => (v / 1e6) + 'jt' }, grid: { color: gridC } } } }
   });
   const ang = { 'POV Curhat': 61, 'Shock Review': 54, 'Solusi Cepat': 49, 'Vs Mahal': 52, 'Mini Drama': 58, 'FOMO': 47 };
   mk('angleChart', {
-    type: 'radar', data: { labels: Object.keys(ang), datasets: [{ label: 'Retensi 3 detik %', data: Object.values(ang), borderColor: '#ff2bd6', backgroundColor: 'rgba(255,43,214,.2)', pointBackgroundColor: '#00f0ff' }] },
+    type: 'radar', data: { labels: Object.keys(ang), datasets: [{ label: 'Retensi 3 detik %', data: Object.values(ang), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,.18)', pointBackgroundColor: '#1e40af' }] },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tickC } } }, scales: { r: { angleLines: { color: gridC }, grid: { color: gridC }, pointLabels: { color: tickC, font: { size: 10 } }, ticks: { display: false }, suggestedMin: 30, suggestedMax: 70 } } }
   });
   const hm = $('#heatmap'); const peak = { 12: .8, 13: .7, 17: .85, 18: .9, 19: .8, 20: 1, 21: .95, 22: .7 };
-  hm.innerHTML = Array.from({ length: 24 }, (_, h) => { const v = peak[h] ?? (h < 6 ? .08 : .2 + (h % 5) * .04); return `<div title="${h}:00 — ${num(v * 6000)} views" style="aspect-ratio:1;border-radius:2px;background:rgba(${v > .6 ? '255,43,214' : '0,240,255'},${.12 + v * .8});box-shadow:${v > .8 ? '0 0 8px rgba(255,43,214,.7)' : 'none'}"></div>`; }).join('');
+  hm.innerHTML = Array.from({ length: 24 }, (_, h) => { const v = peak[h] ?? (h < 6 ? .08 : .2 + (h % 5) * .04); return `<div title="${h}:00 — ${num(v * 6000)} views" style="aspect-ratio:1;border-radius:2px;background:rgba(${v > .6 ? '30,64,175' : '37,99,235'},${.1 + v * .85});box-shadow:${v > .8 ? '0 0 8px rgba(30,64,175,.5)' : 'none'}"></div>`; }).join('');
   const best = S.products.slice().sort((a, b) => b.score - a.score)[0];
   const sold = S.products.slice().sort((a, b) => commRp(b) * b.sold7d - commRp(a) * a.sold7d)[0];
   const ins = [
@@ -304,7 +304,7 @@ function renderAnalytics() {
     ['c-cyan', 'sparkles', 'Archetype POV Curhat unggul di retensi 3 detik; uji A/B dengan Mini Drama.'],
     S.queue.some(q => q.status === 'Failed') && ['c-red', 'alert-triangle', 'Ada video gagal tayang. Buka Publisher lalu klik Retry.']
   ].filter(Boolean);
-  $('#insights').innerHTML = ins.map(i => `<div class="flex gap-2 p-3" style="background:rgba(0,0,0,.3);border-left:2px solid currentColor;" ><i data-lucide="${i[1]}" class="w-4 h-4 shrink-0 ${i[0]}"></i><span>${esc(i[2])}</span></div>`).join('');
+  $('#insights').innerHTML = ins.map(i => `<div class="flex gap-2 p-3" style="background:rgba(37,99,235,.06);border-left:2px solid currentColor;" ><i data-lucide="${i[1]}" class="w-4 h-4 shrink-0 ${i[0]}"></i><span>${esc(i[2])}</span></div>`).join('');
   icons();
 }
 
@@ -478,7 +478,7 @@ function hookLab() {
     `${num(p.sold7d)} orang beli ini minggu lalu, ternyata ini alasannya.`, `Harga ${rp(p.price)} tapi hasilnya bikin aku nggak percaya.`,
     `Aku salah banget soal ${p.name}, dan ini buktinya.`
   ];
-  $('#hookLab').innerHTML = v.map((h, i) => `<div class="flex items-center gap-2 p-2 text-xs" style="background:rgba(0,0,0,.35);border:1px solid var(--line)"><b class="mono c-mag">V${i + 1}</b><span class="flex-1">${esc(h)}</span><button class="btn btn-sm" data-hook="${esc(h)}">Pakai</button></div>`).join('');
+  $('#hookLab').innerHTML = v.map((h, i) => `<div class="flex items-center gap-2 p-2 text-xs" style="background:rgba(37,99,235,.06);border:1px solid var(--line)"><b class="mono c-mag">V${i + 1}</b><span class="flex-1">${esc(h)}</span><button class="btn btn-sm" data-hook="${esc(h)}">Pakai</button></div>`).join('');
 }
 async function saveScript() {
   const s = segs(), p = curProd();
@@ -491,7 +491,7 @@ async function saveScript() {
   }
 }
 function renderScriptLib() {
-  $('#scriptLib').innerHTML = S.scripts.length ? S.scripts.map(s => `<div class="p-3 text-xs" style="background:rgba(0,0,0,.3);border:1px solid var(--line)"><div class="flex justify-between"><b class="truncate">${esc(s.product)}</b><span class="chip c-grn">${s.score}</span></div><div class="text-[var(--muted)] mt-1 truncate">${esc(s.hook)}</div><div class="flex gap-2 mt-2"><button class="btn btn-sm" data-load="${esc(s.id)}">Muat</button><button class="btn btn-sm btn-danger" data-rm="${esc(s.id)}">Hapus</button></div></div>`).join('') : '<div class="empty">Belum ada naskah tersimpan.</div>';
+  $('#scriptLib').innerHTML = S.scripts.length ? S.scripts.map(s => `<div class="p-3 text-xs" style="background:rgba(37,99,235,.06);border:1px solid var(--line)"><div class="flex justify-between"><b class="truncate">${esc(s.product)}</b><span class="chip c-grn">${s.score}</span></div><div class="text-[var(--muted)] mt-1 truncate">${esc(s.hook)}</div><div class="flex gap-2 mt-2"><button class="btn btn-sm" data-load="${esc(s.id)}">Muat</button><button class="btn btn-sm btn-danger" data-rm="${esc(s.id)}">Hapus</button></div></div>`).join('') : '<div class="empty">Belum ada naskah tersimpan.</div>';
 }
 
 /* ---------- Studio ---------- */

@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NexCreator AI v4 — Cyberpunk TikTok Affiliate Studio</title>
 <meta name="description" content="Autonomous TikTok Affiliate Virtual Studio: product hunter, ATM script AI, virtual creator, auto-publisher & Telegram report.">
-<meta name="theme-color" content="#05010f">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2305010f'/%3E%3Cpath d='M14 46V18l36 28V18' fill='none' stroke='%2300f0ff' stroke-width='6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f5f8ff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%232563eb%27/%3E%3Cpath d='M14 46V18l36 28V18' fill='none' stroke=%27white%27 stroke-width='6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Exo+2:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
@@ -29,11 +29,11 @@
 </div>
 
 <!-- HEADER -->
-<header class="sticky top-0 z-40" style="background:rgba(5,1,15,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)">
+<header class="sticky top-0 z-40" style="background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)">
   <div class="max-w-[1600px] mx-auto px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 grid place-items-center" style="background:linear-gradient(135deg,var(--cyan),var(--magenta));clip-path:polygon(0 0,80% 0,100% 20%,100% 100%,20% 100%,0 80%)">
-        <i data-lucide="bot" class="w-5 h-5" style="color:#05010f"></i>
+      <div class="w-10 h-10 grid place-items-center" style="background:linear-gradient(135deg,var(--cyan),var(--magenta));border-radius:12px">
+        <i data-lucide="bot" class="w-5 h-5" style="color:#fff"></i>
       </div>
       <div>
         <div class="font-h text-base font-extrabold tracking-wider glitch" data-text="NEXCREATOR.AI">NEXCREATOR.AI</div>
@@ -113,7 +113,7 @@
           <div><div class="flex justify-between text-xs mb-1"><span>CVR</span><b class="mono" id="lblCvr"></b></div><input type="range" id="rCvr" min="5" max="80" value="20"></div>
         </div>
       </div>
-      <div class="mt-5 p-4 space-y-2" style="background:rgba(0,0,0,.35);border:1px solid var(--line)">
+      <div class="mt-5 p-4 space-y-2" style="background:rgba(37,99,235,.05);border:1px solid var(--line)">
         <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Klik keranjang / bln</span><b class="mono" id="oClicks"></b></div>
         <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Pesanan / bln</span><b class="mono" id="oOrders"></b></div>
         <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Komisi kotor</span><b class="mono c-grn" id="oGross"></b></div>
@@ -271,10 +271,10 @@
           <div class="cap" id="phCap">Tekan simulasi untuk mulai</div>
         </div>
         <div class="absolute bottom-3 inset-x-3 z-10 space-y-2">
-          <div class="flex items-center gap-2 p-2" style="background:rgba(10,6,32,.92);border:1px solid var(--yellow)">
-            <div class="w-9 h-9 grid place-items-center shrink-0" style="background:var(--yellow);color:#05010f"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
-            <div class="min-w-0 flex-1"><div class="text-[9px] font-bold c-yel">KERANJANG KUNING • COD</div><div class="text-xs font-bold truncate" id="phProd">—</div></div>
-            <span class="px-2 py-1 text-[10px] font-extrabold" style="background:var(--yellow);color:#05010f">BELI</span>
+          <div class="flex items-center gap-2 p-2" style="background:rgba(11,20,55,.92);border:1px solid #38bdf8">
+            <div class="w-9 h-9 grid place-items-center shrink-0" style="background:#38bdf8;color:#0b1437"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
+            <div class="min-w-0 flex-1"><div class="text-[9px] font-bold " style="color:#7dd3fc">KERANJANG KUNING • COD</div><div class="text-xs font-bold truncate" id="phProd">—</div></div>
+            <span class="px-2 py-1 text-[10px] font-extrabold" style="background:#38bdf8;color:#0b1437">BELI</span>
           </div>
           <div class="text-xs"><b id="phHandle">@akun</b><div class="text-[10px] text-[var(--muted)] truncate" id="phTags">#fyp</div></div>
         </div>
