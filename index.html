@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NexCreator AI v4 — Cyberpunk TikTok Affiliate Studio</title>
+<meta name="description" content="Autonomous TikTok Affiliate Virtual Studio: product hunter, ATM script AI, virtual creator, auto-publisher & Telegram report.">
+<meta name="theme-color" content="#05010f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2305010f'/%3E%3Cpath d='M14 46V18l36 28V18' fill='none' stroke='%2300f0ff' stroke-width='6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Exo+2:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="font-h text-2xl tracking-widest glitch" data-text="NEXCREATOR.AI">NEXCREATOR.AI</div>
+  <div class="bar"><i></i></div>
+  <div class="mono text-[11px] c-cyan" id="bootText">initializing neural core...</div>
+</div>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-40" style="background:rgba(5,1,15,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)">
+  <div class="max-w-[1600px] mx-auto px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 grid place-items-center" style="background:linear-gradient(135deg,var(--cyan),var(--magenta));clip-path:polygon(0 0,80% 0,100% 20%,100% 100%,20% 100%,0 80%)">
+        <i data-lucide="bot" class="w-5 h-5" style="color:#05010f"></i>
+      </div>
+      <div>
+        <div class="font-h text-base font-extrabold tracking-wider glitch" data-text="NEXCREATOR.AI">NEXCREATOR.AI</div>
+        <div class="mono text-[10px] c-cyan">v4.0 // CYBER-STUDIO // <span id="clock">--:--:--</span> WIB</div>
+      </div>
+    </div>
+
+    <nav class="flex items-center overflow-x-auto max-w-full" id="nav">
+      <button class="tab active" data-tab="command"><i data-lucide="cpu" class="w-4 h-4"></i>Command <span class="kbd">1</span></button>
+      <button class="tab" data-tab="hunter"><i data-lucide="flame" class="w-4 h-4"></i>Hunter <span class="kbd">2</span></button>
+      <button class="tab" data-tab="script"><i data-lucide="sparkles" class="w-4 h-4"></i>Script <span class="kbd">3</span></button>
+      <button class="tab" data-tab="studio"><i data-lucide="video" class="w-4 h-4"></i>Studio <span class="kbd">4</span></button>
+      <button class="tab" data-tab="publisher"><i data-lucide="send" class="w-4 h-4"></i>Publisher <span class="kbd">5</span></button>
+      <button class="tab" data-tab="analytics"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Analytics <span class="kbd">6</span></button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="btn btn-sm" id="btnPalette" title="Command palette (Ctrl+K)"><i data-lucide="search" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Ctrl K</span></button>
+      <button class="btn btn-sm" id="sbBadge" title="Sinkronisasi Supabase"><span id="sbDot" class="w-2 h-2 rounded-full" style="background:var(--yellow)"></span><span id="sbText" class="mono">offline</span></button>
+      <button class="btn btn-primary btn-sm" id="btnCycle"><i data-lucide="play" class="w-3.5 h-3.5"></i><span>Run 24/7 Cycle</span></button>
+      <button class="btn btn-sm" id="btnSettings" title="Pengaturan"><i data-lucide="settings" class="w-4 h-4"></i></button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-[1600px] w-full mx-auto px-4 lg:px-8 py-6">
+
+<!-- ============ 1. COMMAND ============ -->
+<section id="tab-command" class="view space-y-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpiGrid"></div>
+
+  <div class="cy-card p-5 hover-glow">
+    <span class="corner tl"></span><span class="corner br"></span>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div>
+        <h2 class="h-title flex items-center gap-2"><i data-lucide="git-branch" class="w-4 h-4 c-cyan"></i>Orkestrasi Agentic AI 24/7</h2>
+        <p class="sub">Crawl → Transkrip → Naskah → Suara → Video → Publish</p>
+      </div>
+      <span class="chip c-grn" id="pipeState">STANDBY</span>
+    </div>
+    <div class="pipe" id="pipe"></div>
+    <div class="progress mt-4"><i id="pipeProg"></i></div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7 space-y-6">
+      <div class="cy-card p-5 hover-glow">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="h-title">Komisi & Tayangan 7 Hari</h3>
+          <span class="chip c-cyan">LIVE</span>
+        </div>
+        <div class="h-60"><canvas id="revChart"></canvas></div>
+      </div>
+      <div class="cy-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="h-title c-grn flex items-center gap-2"><span class="w-2 h-2 rounded-full animate-ping" style="background:var(--green)"></span>Agent Terminal</h3>
+          <div class="flex gap-2">
+            <button class="btn btn-sm" id="btnExportLog">Export</button>
+            <button class="btn btn-sm" id="btnClearLog">Clear</button>
+          </div>
+        </div>
+        <div id="terminalLog"></div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 cy-card p-5 hover-glow">
+      <span class="corner tl"></span><span class="corner br"></span>
+      <h3 class="h-title flex items-center gap-2 mb-1"><i data-lucide="calculator" class="w-4 h-4 c-grn"></i>Kalkulator Profit Affiliate</h3>
+      <p class="sub mb-4">Simulasi skala konten harian vs biaya operasional</p>
+      <div class="space-y-4" id="roiForm">
+        <div><div class="flex justify-between text-xs mb-1"><span>Video / hari</span><b class="mono c-grn" id="lblVid"></b></div><input type="range" id="rVid" min="1" max="20" value="3"></div>
+        <div><div class="flex justify-between text-xs mb-1"><span>Views / video</span><b class="mono c-cyan" id="lblViews"></b></div><input type="range" id="rViews" min="500" max="50000" step="500" value="2500"></div>
+        <div><div class="flex justify-between text-xs mb-1"><span>Harga produk</span><b class="mono c-yel" id="lblPrice"></b></div><input type="range" id="rPrice" min="25000" max="500000" step="5000" value="85000"></div>
+        <div><div class="flex justify-between text-xs mb-1"><span>Komisi</span><b class="mono c-mag" id="lblComm"></b></div><input type="range" id="rComm" min="3" max="30" value="15"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><div class="flex justify-between text-xs mb-1"><span>CTR</span><b class="mono" id="lblCtr"></b></div><input type="range" id="rCtr" min="5" max="80" value="32"></div>
+          <div><div class="flex justify-between text-xs mb-1"><span>CVR</span><b class="mono" id="lblCvr"></b></div><input type="range" id="rCvr" min="5" max="80" value="20"></div>
+        </div>
+      </div>
+      <div class="mt-5 p-4 space-y-2" style="background:rgba(0,0,0,.35);border:1px solid var(--line)">
+        <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Klik keranjang / bln</span><b class="mono" id="oClicks"></b></div>
+        <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Pesanan / bln</span><b class="mono" id="oOrders"></b></div>
+        <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Komisi kotor</span><b class="mono c-grn" id="oGross"></b></div>
+        <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Biaya ops (VPS+API)</span><b class="mono c-red" id="oCost"></b></div>
+        <div class="neon-line"></div>
+        <div class="flex justify-between items-center"><span class="h-title c-grn">Laba bersih</span><b class="font-h text-xl c-grn" id="oNet"></b></div>
+        <div class="flex justify-between text-xs"><span class="text-[var(--muted)]">Break-even</span><b class="mono" id="oBE"></b></div>
+      </div>
+      <p class="text-[10px] mt-3 text-[var(--muted)]">* Simulasi ilustratif. Hasil nyata bergantung niche, konten, dan kebijakan TikTok Shop.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. HUNTER ============ -->
+<section id="tab-hunter" class="view space-y-6" hidden>
+  <div class="cy-card p-5 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h2 class="h-title flex items-center gap-2"><i data-lucide="flame" class="w-4 h-4 c-yel"></i>Winning Product & Hook Inspector</h2>
+      <p class="sub">Tabel <code class="c-cyan mono">products</code> · sortir, cari, impor/ekspor CSV</p>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center">
+      <input class="inp" style="width:190px" id="fSearch" placeholder="Cari produk / hook...">
+      <select class="inp" style="width:150px" id="fCat">
+        <option value="ALL">Semua Kategori</option><option>Home</option><option>Gadget</option><option>Beauty</option><option>Fashion</option>
+      </select>
+      <select class="inp" style="width:160px" id="fSort">
+        <option value="score">Skor Viral</option><option value="sold7d">Terjual</option><option value="commRp">Komisi/unit</option><option value="price">Harga</option>
+      </select>
+      <button class="btn btn-sm" id="btnCsvImport"><i data-lucide="upload" class="w-3.5 h-3.5"></i>CSV</button>
+      <button class="btn btn-sm" id="btnCsvExport"><i data-lucide="download" class="w-3.5 h-3.5"></i>CSV</button>
+      <button class="btn btn-primary btn-sm" id="btnAddProd"><i data-lucide="plus" class="w-3.5 h-3.5"></i>Tambah</button>
+      <input type="file" id="csvFile" accept=".csv" hidden>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="hunterStats"></div>
+  <div class="cy-card overflow-hidden"><div class="overflow-x-auto">
+    <table class="tbl"><thead><tr>
+      <th>Produk</th><th>Kategori</th><th>Harga</th><th>Komisi</th><th>Terjual 7H</th><th>Skor</th><th>Hook Kompetitor</th><th class="text-right">Aksi</th>
+    </tr></thead><tbody id="prodBody"></tbody></table>
+  </div></div>
+</section>
+
+<!-- ============ 3. SCRIPT ============ -->
+<section id="tab-script" class="view space-y-6" hidden>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-5 space-y-6">
+      <div class="cy-card p-5 space-y-4">
+        <h2 class="h-title flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 c-vio"></i>Mesin ATM (Amati-Tiru-Modifikasi)</h2>
+        <p class="sub">Ubah hook kompetitor menjadi naskah orisinal. Gemini via proxy aman, fallback ke formula lokal.</p>
+        <div><label class="lbl">1. Produk target</label><select class="inp" id="sProd"></select></div>
+        <div>
+          <label class="lbl">2. Archetype cerita</label>
+          <div class="grid grid-cols-2 gap-2" id="angles">
+            <button class="angle active" data-a="pov">POV Curhat</button>
+            <button class="angle" data-a="unbox">Shock Review</button>
+            <button class="angle" data-a="problem">Solusi Cepat</button>
+            <button class="angle" data-a="compare">Vs Mahal</button>
+            <button class="angle" data-a="story">Mini Drama</button>
+            <button class="angle" data-a="fomo">FOMO Promo</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="lbl">Durasi</label>
+            <select class="inp" id="sDur"><option value="15">15 detik</option><option value="30" selected>30 detik</option><option value="45">45 detik</option><option value="60">60 detik</option></select></div>
+          <div><label class="lbl">Gaya bahasa</label>
+            <select class="inp" id="sTone"><option value="santai">Santai / gaul</option><option value="hangat">Hangat</option><option value="energik">Energik</option><option value="profesional">Profesional</option></select></div>
+        </div>
+        <div><label class="lbl">3. Hook kompetitor</label><textarea class="inp" rows="2" id="sHookIn"></textarea></div>
+        <div class="flex gap-2">
+          <button class="btn btn-primary flex-1" id="btnGen"><i data-lucide="wand-2" class="w-4 h-4"></i>Racik Naskah</button>
+          <button class="btn" id="btnSaveScript"><i data-lucide="cloud-upload" class="w-4 h-4"></i>Simpan</button>
+        </div>
+        <button class="btn btn-sm w-full" id="btnHookLab"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>Hook Lab: 5 variasi A/B</button>
+        <div id="hookLab" class="space-y-2"></div>
+      </div>
+
+      <div class="cy-card p-5">
+        <h3 class="h-title mb-3">Pustaka Naskah Tersimpan</h3>
+        <div id="scriptLib" class="space-y-2 max-h-64 overflow-y-auto"></div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-7 space-y-6">
+      <div class="cy-card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3" style="border-bottom:1px solid var(--line)">
+          <div>
+            <h3 class="h-title">Struktur Naskah Berbasis Retensi</h3>
+            <p class="sub"><span id="wordCount">0</span> kata · estimasi <span id="durEst">0</span> detik · <span id="engineTag" class="c-cyan mono">local</span></p>
+          </div>
+          <div class="ring" id="scoreRing" style="--v:0"><b id="scoreNum">0</b></div>
+        </div>
+        <div class="space-y-3">
+          <div class="seg seg-hook"><div class="mono text-[11px] c-red mb-1">[00:00–00:03] HOOK</div><textarea rows="2" id="segHook" data-seg></textarea></div>
+          <div class="seg seg-body"><div class="mono text-[11px] c-yel mb-1">[00:03–00:15] STORY / PAIN POINT</div><textarea rows="3" id="segBody" data-seg></textarea></div>
+          <div class="seg seg-demo"><div class="mono text-[11px] c-cyan mb-1">[00:15–00:25] PROOF & DEMO</div><textarea rows="3" id="segDemo" data-seg></textarea></div>
+          <div class="seg seg-cta"><div class="mono text-[11px] c-grn mb-1">[00:25–00:30] CTA KERANJANG KUNING</div><textarea rows="2" id="segCta" data-seg></textarea></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="checklist"></div>
+        <div>
+          <label class="lbl">Storyboard B-Roll (9:16)</label>
+          <div class="story" id="storyboard"></div>
+        </div>
+        <div class="flex flex-wrap justify-end gap-2 pt-2">
+          <button class="btn btn-sm" id="btnCopyScript"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Salin</button>
+          <button class="btn btn-sm" id="btnSpeakScript"><i data-lucide="volume-2" class="w-3.5 h-3.5"></i>Dengar</button>
+          <button class="btn btn-primary" data-goto="studio">Kirim ke Studio <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. STUDIO ============ -->
+<section id="tab-studio" class="view space-y-6" hidden>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7 space-y-6">
+      <div class="cy-card p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="h-title flex items-center gap-2"><i data-lucide="user-check" class="w-4 h-4 c-cyan"></i>Persona Kreator AI</h2>
+          <button class="btn btn-sm" id="btnAddChar"><i data-lucide="plus" class="w-3.5 h-3.5"></i>Persona</button>
+        </div>
+        <div id="charGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+      </div>
+
+      <div class="cy-card p-5 space-y-4">
+        <h3 class="h-title flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 c-grn"></i>Kalibrasi Suara & Tampilan</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><div class="flex justify-between text-xs mb-1"><span>Kecepatan</span><b class="mono c-grn" id="lblRate"></b></div><input type="range" id="vRate" min="0.8" max="1.4" step="0.05" value="1.05"></div>
+          <div><div class="flex justify-between text-xs mb-1"><span>Pitch</span><b class="mono c-cyan" id="lblPitch"></b></div><input type="range" id="vPitch" min="0.7" max="1.4" step="0.05" value="1.05"></div>
+          <div><label class="lbl">Suara browser (id-ID)</label><select class="inp" id="vVoice"></select></div>
+          <div><label class="lbl">Gaya caption</label>
+            <select class="inp" id="capStyle"><option value="">Karaoke Kuning</option><option value="neon">Neon Cyan</option><option value="classic">Klasik Outline</option></select></div>
+          <div><label class="lbl">Akun TikTok</label><select class="inp" id="stAccount"></select></div>
+          <div><label class="lbl">Jam tayang</label>
+            <select class="inp" id="stTime"><option>12:15 WIB</option><option>17:30 WIB</option><option>20:00 WIB</option><option>21:30 WIB</option></select></div>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn btn-primary flex-1" id="btnPlay"><i data-lucide="play-circle" class="w-4 h-4"></i><span id="playLbl">Simulasi Suara & Lip-Sync</span></button>
+          <button class="btn btn-pink flex-1" id="btnQueue"><i data-lucide="send" class="w-4 h-4"></i>Render & Kirim ke Antrean</button>
+        </div>
+        <button class="btn btn-sm w-full" id="btnExportPack"><i data-lucide="package" class="w-3.5 h-3.5"></i>Unduh Paket Produksi (JSON: naskah + SSML + shot list)</button>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 flex justify-center">
+      <div class="phone" id="phone">
+        <img class="bg" id="phImg" alt="avatar" src="">
+        <div class="shade"></div><div class="scan"></div>
+        <div class="absolute top-3 left-3 right-3 flex justify-between z-10 text-[11px] font-bold">
+          <span class="chip c-cyan" style="background:rgba(5,1,15,.7)" id="phBadge">AI</span>
+          <span class="chip c-red" style="background:rgba(5,1,15,.7)">9:16 HD</span>
+        </div>
+        <div class="absolute inset-x-3 top-1/2 -translate-y-1/2 z-10 space-y-3">
+          <div class="wave"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cap" id="phCap">Tekan simulasi untuk mulai</div>
+        </div>
+        <div class="absolute bottom-3 inset-x-3 z-10 space-y-2">
+          <div class="flex items-center gap-2 p-2" style="background:rgba(10,6,32,.92);border:1px solid var(--yellow)">
+            <div class="w-9 h-9 grid place-items-center shrink-0" style="background:var(--yellow);color:#05010f"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
+            <div class="min-w-0 flex-1"><div class="text-[9px] font-bold c-yel">KERANJANG KUNING • COD</div><div class="text-xs font-bold truncate" id="phProd">—</div></div>
+            <span class="px-2 py-1 text-[10px] font-extrabold" style="background:var(--yellow);color:#05010f">BELI</span>
+          </div>
+          <div class="text-xs"><b id="phHandle">@akun</b><div class="text-[10px] text-[var(--muted)] truncate" id="phTags">#fyp</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. PUBLISHER ============ -->
+<section id="tab-publisher" class="view space-y-6" hidden>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7 space-y-6">
+      <div class="cy-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="h-title flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 c-grn"></i>Antrean Auto-Publisher</h2>
+            <p class="sub">Tabel <code class="c-cyan mono">video_queue</code></p>
+          </div>
+          <div class="flex gap-2">
+            <select class="inp" style="width:130px" id="qFilter"><option value="ALL">Semua</option><option>Scheduled</option><option>Processing</option><option>Published</option><option>Failed</option></select>
+            <button class="btn btn-sm" id="btnRefresh"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i></button>
+          </div>
+        </div>
+        <div class="timeline mb-5" id="timeline"></div>
+        <div id="queueList" class="space-y-3"></div>
+      </div>
+    </div>
+    <div class="lg:col-span-5 cy-card p-5 flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <h3 class="h-title flex items-center gap-2"><i data-lucide="message-square-code" class="w-4 h-4" style="color:var(--cyan)"></i>Laporan Telegram</h3>
+        <span class="chip c-cyan">22:00 WIB</span>
+      </div>
+      <pre class="tg" id="tgPreview"></pre>
+      <div class="flex gap-2">
+        <button class="btn flex-1" id="btnCopyTg"><i data-lucide="copy" class="w-4 h-4"></i>Salin</button>
+        <button class="btn btn-primary flex-1" id="btnSendTg"><i data-lucide="send" class="w-4 h-4"></i>Kirim</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. ANALYTICS ============ -->
+<section id="tab-analytics" class="view space-y-6" hidden>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="cy-card p-5 lg:col-span-2"><h3 class="h-title mb-3">Komisi per Kategori Produk</h3><div class="h-64"><canvas id="catChart"></canvas></div></div>
+    <div class="cy-card p-5"><h3 class="h-title mb-3">Retensi Hook per Archetype</h3><div class="h-64"><canvas id="angleChart"></canvas></div></div>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="cy-card p-5"><h3 class="h-title mb-3">Heatmap Jam Tayang (rata-rata views)</h3><div id="heatmap" class="grid gap-1" style="grid-template-columns:repeat(24,1fr)"></div>
+      <div class="flex justify-between text-[10px] mono text-[var(--muted)] mt-2"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>
+    <div class="cy-card p-5"><h3 class="h-title mb-3">Rekomendasi Agen</h3><div id="insights" class="space-y-2 text-xs"></div></div>
+  </div>
+</section>
+</main>
+
+<footer class="relative z-10 text-center py-6 mono text-[10px] text-[var(--muted)]">
+  NEXCREATOR.AI v4.0 · Tekan <span class="kbd">Ctrl</span>+<span class="kbd">K</span> untuk palette · <span class="kbd">1-6</span> pindah tab
+</footer>
+
+<!-- SETTINGS -->
+<div class="overlay" id="mSettings"><div class="cy-card modal p-6 space-y-4">
+  <div class="flex justify-between items-center pb-3" style="border-bottom:1px solid var(--line)">
+    <h3 class="h-title">Konfigurasi</h3><button class="btn btn-sm" data-close><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <div><label class="lbl c-grn">Supabase URL</label><input class="inp mono" id="cSbUrl" placeholder="https://xxxx.supabase.co"></div>
+  <div><label class="lbl c-grn">Supabase Anon Key</label><input class="inp mono" id="cSbKey" type="password"></div>
+  <div class="pt-3" style="border-top:1px solid var(--line)">
+    <label class="lbl c-vio">Gemini API Key (opsional)</label>
+    <input class="inp mono" id="cGem" type="password" placeholder="Kosong = pakai proxy /api/gemini (env Vercel)">
+    <p class="text-[10px] mt-1 text-[var(--muted)]">Direkomendasikan: set <code>GEMINI_API_KEY</code> di Vercel agar key tidak tersimpan di browser.</p>
+  </div>
+  <div class="pt-3 grid grid-cols-2 gap-3" style="border-top:1px solid var(--line)">
+    <div><label class="lbl c-cyan">Telegram Bot Token</label><input class="inp mono" id="cTgT" type="password" placeholder="Kosong = proxy /api/telegram"></div>
+    <div><label class="lbl c-cyan">Chat ID</label><input class="inp mono" id="cTgC"></div>
+  </div>
+  <div class="pt-3 space-y-2" style="border-top:1px solid var(--line)">
+    <div class="flex items-center justify-between text-xs"><span>Efek visual (partikel, scanline)</span><div class="sw on" id="swFx"></div></div>
+    <div class="flex items-center justify-between text-xs"><span>Suara UI</span><div class="sw" id="swSnd"></div></div>
+    <div class="flex items-center justify-between text-xs"><span>Auto-refresh cloud tiap 60 detik</span><div class="sw" id="swAuto"></div></div>
+  </div>
+  <div class="flex flex-wrap justify-between gap-2 pt-3" style="border-top:1px solid var(--line)">
+    <div class="flex gap-2">
+      <button class="btn btn-sm" id="btnSeed"><i data-lucide="database-backup" class="w-3.5 h-3.5"></i>Seed</button>
+      <button class="btn btn-sm btn-danger" id="btnReset">Reset lokal</button>
+    </div>
+    <div class="flex gap-2"><button class="btn btn-sm" data-close>Batal</button><button class="btn btn-primary btn-sm" id="btnSaveCfg">Simpan</button></div>
+  </div>
+</div></div>
+
+<!-- PRODUCT -->
+<div class="overlay" id="mProduct"><form class="cy-card modal p-6 space-y-3" id="formProd">
+  <div class="flex justify-between items-center pb-3" style="border-bottom:1px solid var(--line)">
+    <h3 class="h-title" id="prodTitle">Tambah Produk</h3><button type="button" class="btn btn-sm" data-close><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <input type="hidden" id="pId">
+  <div><label class="lbl">Nama</label><input class="inp" id="pName" required></div>
+  <div class="grid grid-cols-2 gap-3">
+    <div><label class="lbl">Kategori</label><select class="inp" id="pCat"><option>Home</option><option>Gadget</option><option>Beauty</option><option>Fashion</option></select></div>
+    <div><label class="lbl">Harga (Rp)</label><input class="inp" type="number" min="1" id="pPrice" value="79000" required></div>
+    <div><label class="lbl">Komisi (%)</label><input class="inp" type="number" min="1" max="100" id="pComm" value="15" required></div>
+    <div><label class="lbl">Terjual 7 hari</label><input class="inp" type="number" min="0" id="pSold" value="1850" required></div>
+  </div>
+  <div><label class="lbl">Hook 3 detik kompetitor</label><textarea class="inp" rows="2" id="pHook" required></textarea></div>
+  <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn btn-sm" data-close>Batal</button><button class="btn btn-primary btn-sm">Simpan</button></div>
+</form></div>
+
+<!-- PERSONA -->
+<div class="overlay" id="mChar"><form class="cy-card modal p-6 space-y-3" id="formChar">
+  <div class="flex justify-between items-center pb-3" style="border-bottom:1px solid var(--line)">
+    <h3 class="h-title">Persona Baru</h3><button type="button" class="btn btn-sm" data-close><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <div><label class="lbl">Nama</label><input class="inp" id="chName" required></div>
+  <div><label class="lbl">Peran / niche</label><input class="inp" id="chRole" required></div>
+  <div><label class="lbl">URL avatar (https)</label><input class="inp" id="chImg" type="url" placeholder="https://..."></div>
+  <div class="flex justify-end gap-2 pt-2"><button type="button" class="btn btn-sm" data-close>Batal</button><button class="btn btn-primary btn-sm">Tambah</button></div>
+</form></div>
+
+<!-- PALETTE -->
+<div class="overlay" id="palette"><div class="cy-card modal p-0" style="max-width:560px">
+  <input class="inp" id="palInput" placeholder="Ketik perintah... (tab, run, theme, export)" style="border:0;border-bottom:1px solid var(--line);padding:14px 16px;font-size:.9rem">
+  <div id="palList" class="max-h-72 overflow-y-auto"></div>
+</div></div>
+
+<div id="toasts"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
