@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   BarChart3,
   CalendarClock,
@@ -101,9 +102,9 @@ export function AppShell({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
+                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:translate-x-0.5",
                   active
-                    ? "bg-emerald-500/15 text-emerald-300"
+                    ? "bg-emerald-500/15 text-emerald-300 shadow-[inset_2px_0_0_#C9A227]"
                     : "text-[#8A97AD] hover:bg-[#182339] hover:text-[#E8EEF7]",
                 )}
               >
@@ -167,9 +168,9 @@ export function AppShell({
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-medium",
+                    "flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-all duration-200",
                     active
-                      ? "bg-emerald-500/15 text-emerald-300"
+                      ? "bg-emerald-500/15 text-emerald-300 shadow-[inset_2px_0_0_#C9A227]"
                       : "text-[#8A97AD] hover:bg-[#182339]",
                   )}
                 >
@@ -207,9 +208,15 @@ export function AppShell({
           </div>
         )}
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-6">
+        <motion.main
+          key={pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-6"
+        >
           {children}
-        </main>
+        </motion.main>
 
         <footer className="border-t border-[#182339] px-4 py-4 text-center text-[11px] text-[#8A97AD] md:px-6">
           NexCreator AI V5 · Fase A — script + production pack + jadwal manual.
