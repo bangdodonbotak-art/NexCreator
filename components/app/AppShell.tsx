@@ -71,26 +71,26 @@ export function AppShell({
         "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium",
         ok
           ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-          : "border-[#182339] bg-[#0E1524] text-[#8A97AD]",
+          : "border-line bg-panel text-mist",
       )}
       title={ok ? `${label} terhubung` : `${label} belum diset`}
     >
-      <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-emerald-400" : "bg-[#8A97AD]")} />
+      <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-emerald-400" : "bg-mist")} />
       {label}: {ok ? "Terhubung" : "Belum diset"}
     </span>
   );
 
   return (
-    <div className="flex min-h-screen bg-[#080C14] text-[#E8EEF7]">
+    <div className="flex min-h-screen bg-ink text-fog">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-[#182339] bg-[#0A0F1C] md:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-line bg-panel-deep md:flex">
         <Link href="/" className="flex items-center gap-2.5 px-5 pb-5 pt-6">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
             <Sparkles className="h-5 w-5" />
           </span>
           <span className="leading-tight">
             <span className="block text-[15px] font-bold tracking-tight">NexCreator</span>
-            <span className="block text-[11px] font-medium text-[#8A97AD]">AI V5 · Studio</span>
+            <span className="block text-[11px] font-medium text-mist">AI V5 · Studio</span>
           </span>
         </Link>
         <nav className="flex-1 space-y-1 px-3" aria-label="Navigasi utama">
@@ -104,21 +104,21 @@ export function AppShell({
                 className={cn(
                   "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:translate-x-0.5",
                   active
-                    ? "bg-emerald-500/15 text-emerald-300 shadow-[inset_2px_0_0_#C9A227]"
-                    : "text-[#8A97AD] hover:bg-[#182339] hover:text-[#E8EEF7]",
+                    ? "bg-emerald-500/15 text-emerald-300 indicator-gold-left"
+                    : "text-mist hover:bg-line hover:text-fog",
                 )}
               >
                 <item.icon className="h-[18px] w-[18px] shrink-0" />
                 <span className="flex-1">{item.label}</span>
-                <kbd className="rounded border border-[#182339] bg-[#080C14] px-1.5 py-0.5 text-[10px] text-[#8A97AD]">
+                <kbd className="rounded border border-line bg-ink px-1.5 py-0.5 text-[10px] text-mist">
                   {item.key}
                 </kbd>
               </Link>
             );
           })}
         </nav>
-        <div className="space-y-2 border-t border-[#182339] p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#8A97AD]">
+        <div className="space-y-2 border-t border-line p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-mist">
             Status setup
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -126,7 +126,7 @@ export function AppShell({
             {statusChip("Gemini", setup.gemini)}
             {statusChip("Telegram", setup.telegram)}
           </div>
-          <p className="text-[11px] leading-relaxed text-[#8A97AD]">
+          <p className="text-[11px] leading-relaxed text-mist">
             Fase A: script + production pack, rakit di CapCut, posting manual
             via aplikasi TikTok.
           </p>
@@ -135,7 +135,7 @@ export function AppShell({
 
       {/* Konten */}
       <div className="flex min-w-0 flex-1 flex-col md:pl-60">
-        <header className="sticky top-0 z-30 border-b border-[#182339] bg-[#080C14]/90 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-line bg-ink/90 backdrop-blur">
           <div className="flex min-h-14 items-center gap-2 px-4 md:px-6">
             <Link href="/" className="flex items-center gap-2 md:hidden">
               <Sparkles className="h-5 w-5 text-emerald-400" />
@@ -145,12 +145,12 @@ export function AppShell({
             <Button
               variant="outline"
               onClick={() => setPaletteOpen(true)}
-              className="min-h-11 gap-2 border-[#182339] bg-[#0E1524] text-[#8A97AD] hover:text-white"
+              className="min-h-11 gap-2 border-line bg-panel text-mist hover:text-white"
               aria-label="Buka palet perintah"
             >
               <Search className="h-4 w-4" />
               <span className="hidden sm:inline">Cari perintah…</span>
-              <kbd className="hidden rounded border border-[#182339] bg-[#080C14] px-1.5 py-0.5 text-[10px] sm:inline">
+              <kbd className="hidden rounded border border-line bg-ink px-1.5 py-0.5 text-[10px] sm:inline">
                 Ctrl K
               </kbd>
             </Button>
@@ -170,8 +170,8 @@ export function AppShell({
                   className={cn(
                     "flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-medium transition-all duration-200",
                     active
-                      ? "bg-emerald-500/15 text-emerald-300 shadow-[inset_2px_0_0_#C9A227]"
-                      : "text-[#8A97AD] hover:bg-[#182339]",
+                      ? "bg-emerald-500/15 text-emerald-300 indicator-gold-bottom"
+                      : "text-mist hover:bg-line",
                   )}
                 >
                   <item.icon className="h-4 w-4" />
@@ -218,7 +218,7 @@ export function AppShell({
           {children}
         </motion.main>
 
-        <footer className="border-t border-[#182339] px-4 py-4 text-center text-[11px] text-[#8A97AD] md:px-6">
+        <footer className="border-t border-line px-4 py-4 text-center text-[11px] text-mist md:px-6">
           NexCreator AI V5 · Fase A — script + production pack + jadwal manual.
           Posting akhir dilakukan lewat aplikasi TikTok. Tidak ada metrik yang
           dipalsukan: semua angka berlabel Real / Manual / Estimasi.

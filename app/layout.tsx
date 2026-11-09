@@ -2,10 +2,31 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/app/Providers";
 
+const SITE_URL = "https://nexcreator.vercel.app";
+const SITE_TITLE = "NexCreator AI V5 — Virtual Creator Studio TikTok Affiliate";
+const SITE_DESC =
+  "Studio kreator virtual untuk TikTok Affiliate tanpa tampil di depan kamera: riset produk, naskah ATM, production pack 9:16, jadwal posting, dan laporan komisi. Fase A: script + rakit manual di CapCut.";
+
 export const metadata: Metadata = {
-  title: "NexCreator AI V5 — Virtual Creator Studio TikTok Affiliate",
-  description:
-    "Studio kreator virtual untuk TikTok Affiliate tanpa tampil di depan kamera: riset produk, naskah ATM, production pack 9:16, jadwal posting, dan laporan komisi. Fase A: script + rakit manual di CapCut.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESC,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESC,
+    url: SITE_URL,
+    siteName: "NexCreator",
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

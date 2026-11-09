@@ -57,3 +57,52 @@
 - Target Rp5.000.000/bulan selalu berlabel GOAL, progres 0%, "Belum ada
   snapshot komisi — mulai dari Rp0".
 - Tidak ada gradient ungu-biru, kartu di dalam kartu, emoji sebagai ikon.
+
+## Aturan aksen — emas vs emerald (ATM $10k, 2026-11-10)
+
+- **Emas `#C9A227` = marketing.** CTA utama, headline aksen sekunder,
+  hairline, badge, angka target, ScrollProgress. Hanya di landing.
+- **Emerald `#10B981` = fungsional app.** Status "Jalan"/"Terhubung",
+  ikon modul, tombol aksi di dalam AppShell, progres/sukses.
+- Jangan pernah pakai emas + emerald dalam SATU elemen yang sama.
+- Pengecualian sadar: garis progres Target (emerald→emas) — progres
+  adalah status fungsional di atas kartu marketing; lebarnya 0% jadi
+  tidak ada warna yang benar-benar tampil.
+
+## Token — satu sumber kebenaran (ATM $10k, 2026-11-10)
+
+- Semua warna di `@theme` globals.css (`--color-gold`, `--color-ink`,
+  `--color-panel`, `--color-line`, `--color-mist`, `--color-fog`, ...).
+  Komponen hanya pakai utility token (`bg-gold`, `text-mist`,
+  `border-line`); literal hex di komponen = pelanggaran.
+- Warna yang harus dipakai di JS (material Three.js) ada di
+  `lib/design-tokens.ts` — cermin @theme, wajib dijaga sinkron.
+- Glow CTA sebagai utility (`gold-glow`, `gold-glow-sm`,
+  `emerald-glow`); indikator nav aktif sebagai class
+  (`.indicator-gold-left` desktop, `.indicator-gold-bottom` mobile).
+
+## Hero — visual asli (ATM $10k, 2026-11-10)
+
+- Layar ponsel hero = mock setia Command Center asli
+  (`app/app/command/page.tsx`): header + 4 kartu statistik + 2 baris
+  pipeline + tombol "Trigger Content Batch" — di R3F (geometri) DAN
+  di StaticHero (CSS, untuk reduced-motion). Angka keadaan kosong yang
+  jujur: 0 / Rp0. Jangan screenshot (app butuh login, Supabase paused).
+- Canvas `frameloop="demand"` + `FrameDriver` (minta frame ~30fps hanya
+  saat canvas terlihat). Parallax pointer ikut ter-update tiap tick.
+
+## Struktur — server components (ATM $10k, 2026-11-10)
+
+- `app/page.tsx` = server component (487 baris). Client islands hanya:
+  `sections/Hero.tsx` (nav + hero + motion), `CountUp`,
+  `TiltCard`, `Reveal`, `LenisProvider`, `ScrollProgress`.
+- Anchor `#masalah` / `#alur` / `#modul` / `#fase` wajib hidup —
+  dicegat Lenis (`lenis.scrollTo`, offset -80); CSS
+  `scroll-behavior: smooth` dihapus supaya tidak bentrok.
+- `CountUp`: state awal = nilai akhir (SSR/ tanpa JS angkanya benar);
+  animasi 0→target hanya saat inView + JS aktif.
+- Meta: `metadataBase` + openGraph + twitter + `favicon.svg` di
+  `app/layout.tsx`; `app/sitemap.ts` (hanya rute publik) +
+  `app/robots.ts` (disallow `/api/`).
+- Reduced-motion: `motion-safe:animate-bounce/pulse` di komponen +
+  guard media query di globals.css (marquee, bounce, pulse, spin mati).

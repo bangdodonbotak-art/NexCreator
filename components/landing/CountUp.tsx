@@ -8,6 +8,8 @@ import { animate, useInView, useReducedMotion } from "framer-motion";
  * Dipakai di section Target: target Rp5.000.000 (GOAL) menghitung naik
  * saat masuk viewport. Progres 0% dan Rp0 tercatat TIDAK dianimasikan
  * jadi angka lain — kejujuran angka dipertahankan.
+ * State awal = nilai akhir, jadi SSR / tanpa JS / sebelum masuk viewport
+ * angkanya tetap benar; animasi 0→target hanya jalan saat inView + JS aktif.
  * Bila prefers-reduced-motion, langsung tampil angka akhir.
  */
 export default function CountUp({
@@ -22,10 +24,13 @@ export default function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const reduceMotion = useReducedMotion();
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(to);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView) {
+      setValue(0);
+      return;
+    }
     if (reduceMotion) {
       setValue(to);
       return;

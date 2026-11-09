@@ -70,9 +70,9 @@ export function CmdPalette({
         if (!v) setQ("");
       }}
     >
-      <DialogContent className="max-w-lg border-[#182339] bg-[#0E1524] p-0 text-[#E8EEF7]">
+      <DialogContent className="max-w-lg border-line bg-panel p-0 text-fog">
         <DialogHeader className="px-4 pb-0 pt-4">
-          <DialogTitle className="text-sm font-semibold text-[#8A97AD]">
+          <DialogTitle className="text-sm font-semibold text-mist">
             Palet Perintah — ketik untuk mencari
           </DialogTitle>
         </DialogHeader>
@@ -96,13 +96,13 @@ export function CmdPalette({
               }
             }}
             placeholder="Cari perintah… (mis. hunter, naskah, analytics)"
-            className="min-h-11 border-[#182339] bg-[#080C14] text-[#E8EEF7] placeholder:text-[#8A97AD]"
+            className="min-h-11 border-line bg-ink text-fog placeholder:text-mist"
             aria-label="Cari perintah"
           />
         </div>
         <div className="max-h-80 overflow-y-auto px-2 pb-3" role="listbox">
           {list.length === 0 && (
-            <p className="px-3 py-6 text-center text-sm text-[#8A97AD]">
+            <p className="px-3 py-6 text-center text-sm text-mist">
               Tidak ada perintah yang cocok.
             </p>
           )}
@@ -115,10 +115,10 @@ export function CmdPalette({
               onClick={() => go(c.href)}
               className={cn(
                 "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm",
-                i === sel ? "bg-emerald-500/15 text-emerald-200" : "text-[#E8EEF7]",
+                i === sel ? "bg-emerald-500/15 text-emerald-200" : "text-fog",
               )}
             >
-              <c.icon className="h-4 w-4 shrink-0 text-[#8A97AD]" />
+              <c.icon className="h-4 w-4 shrink-0 text-mist" />
               {c.label}
             </button>
           ))}

@@ -16,7 +16,7 @@ export function Toaster() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
-            className="pointer-events-auto flex items-start gap-3 rounded-xl border border-[#182339] bg-[#0E1524] p-3 shadow-xl shadow-black/40"
+            className="pointer-events-auto flex items-start gap-3 rounded-xl border border-line bg-panel p-3 shadow-xl shadow-black/40"
             role="status"
           >
             {t.error ? (
@@ -25,9 +25,9 @@ export function Toaster() {
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-[#E8EEF7]">{t.title}</p>
+              <p className="text-sm font-semibold text-fog">{t.title}</p>
               {t.message && (
-                <p className="mt-0.5 text-xs leading-relaxed text-[#8A97AD]">
+                <p className="mt-0.5 text-xs leading-relaxed text-mist">
                   {t.message}
                 </p>
               )}
@@ -35,7 +35,7 @@ export function Toaster() {
             <button
               onClick={() => dismiss(t.id)}
               aria-label="Tutup notifikasi"
-              className="rounded-md p-1 text-[#8A97AD] hover:text-white"
+              className="rounded-md p-1 text-mist hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>

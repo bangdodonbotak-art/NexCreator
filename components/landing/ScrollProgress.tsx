@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useSpring } from "framer-motion";
 
-/** Indikator progres scroll — garis emas di atas halaman landing. */
+/** Indikator progres scroll — satu warna emas (emas = marketing). */
 export default function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -14,7 +14,7 @@ export default function ScrollProgress() {
     <motion.div
       aria-hidden="true"
       style={{ scaleX }}
-      className="fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-gradient-to-r from-[#10B981] via-[#C9A227] to-[#10B981]"
+      className="fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-gold"
     />
   );
 }
