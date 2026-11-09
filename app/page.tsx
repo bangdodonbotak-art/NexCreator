@@ -119,7 +119,7 @@ function SectionHeading({
 }) {
   return (
     <Reveal className="mx-auto max-w-2xl text-center">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-royal-bright">
         {eyebrow}
       </p>
       <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
@@ -130,7 +130,7 @@ function SectionHeading({
           {desc}
         </p>
       ) : null}
-      <div className="gold-hairline mx-auto mt-6 h-px w-24" />
+      <div className="royal-hairline mx-auto mt-6 h-px w-24" />
     </Reveal>
   );
 }
@@ -141,7 +141,7 @@ export default function LandingPage() {
       <div className="min-h-screen overflow-x-clip bg-ink text-fog">
         <ScrollProgress />
         {/* Mesh gradient + noise halus */}
-        <div aria-hidden="true" className="mesh-hero pointer-events-none fixed inset-0" />
+        <div aria-hidden="true" className="mesh-royal pointer-events-none fixed inset-0" />
         <div aria-hidden="true" className="noise-overlay pointer-events-none fixed inset-0" />
 
         <div className="relative">
@@ -166,7 +166,7 @@ export default function LandingPage() {
                         className="flex items-center gap-8 whitespace-nowrap text-sm font-medium tracking-wide text-mist"
                       >
                         {item}
-                        <span className="text-gold" aria-hidden="true">
+                        <span className="text-royal-bright" aria-hidden="true">
                           ◆
                         </span>
                       </span>
@@ -191,7 +191,7 @@ export default function LandingPage() {
                   <Reveal key={p.title} delay={i * 0.08}>
                     <Card className="h-full border-line bg-panel/90">
                       <CardHeader>
-                        <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-amber-500/10 text-amber-300 ring-1 ring-gold/25">
+                        <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-amber-500/10 text-amber-300 ring-1 ring-royal/25">
                           <p.icon className="h-5 w-5" />
                         </span>
                         <CardTitle className="font-display text-lg">
@@ -223,13 +223,13 @@ export default function LandingPage() {
                 <div className="relative mt-12">
                   <span
                     aria-hidden="true"
-                    className="absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent lg:block"
+                    className="absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-transparent via-royal/50 to-transparent lg:block"
                   />
                   <ol className="relative grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {JOURNEY.map((j, i) => (
                       <Reveal key={j.step} delay={i * 0.08}>
                         <li className="relative">
-                          <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border border-gold/40 bg-panel font-display text-xl font-semibold text-gold">
+                          <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border border-royal/40 bg-panel font-display text-xl font-semibold text-royal-bright">
                             {j.step}
                           </span>
                           <h3 className="mt-4 text-base font-semibold">
@@ -247,7 +247,7 @@ export default function LandingPage() {
                   <Button
                     asChild
                     size="lg"
-                    className="min-h-12 rounded-full bg-gold px-6 text-gold-ink hover:bg-gold-bright hover:gold-glow"
+                    className="min-h-12 rounded-full bg-royal px-6 text-white hover:bg-royal-bright hover:royal-glow"
                   >
                     <Link href="/app/command">
                       Coba alurnya sekarang <ArrowRight className="h-4 w-4" />
@@ -268,9 +268,9 @@ export default function LandingPage() {
                 {MODULES.map((m, i) => (
                   <Reveal key={m.title} delay={i * 0.06} className="h-full">
                     <TiltCard className="h-full">
-                      <Card className="group h-full border-line bg-panel/90 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:emerald-glow">
+                      <Card className="group h-full border-line bg-panel/90 transition-all duration-300 hover:-translate-y-1 hover:border-royal/50 hover:royal-glow">
                         <CardHeader>
-                          <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400 ring-1 ring-gold/20 transition-all duration-300 group-hover:bg-emerald-500/25">
+                          <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-royal/15 text-azure ring-1 ring-royal/25 transition-all duration-300 group-hover:bg-royal/25">
                             <m.icon className="h-5 w-5" />
                           </span>
                           <CardTitle className="font-display text-lg">
@@ -292,10 +292,10 @@ export default function LandingPage() {
             {/* TARGET — GOAL, bukan pendapatan */}
             <section className="mx-auto max-w-6xl px-4 pb-16 md:px-6">
               <Reveal>
-                <Card className="overflow-hidden border-gold/30 bg-panel/90">
+                <Card className="overflow-hidden border-royal/30 bg-panel/90">
                   <CardContent className="p-6 md:p-8">
                     <div className="flex flex-col gap-6 md:flex-row md:items-center">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gold/15 text-gold ring-1 ring-gold/30">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-royal/15 text-royal-bright ring-1 ring-royal/30">
                         <Target className="h-6 w-6" />
                       </span>
                       <div className="flex-1">
@@ -314,7 +314,7 @@ export default function LandingPage() {
                           role="img"
                           aria-label="Progres target komisi: 0 persen — belum ada snapshot komisi tercatat"
                         >
-                          <div className="h-full w-0 rounded-full bg-gradient-to-r from-emerald to-gold" />
+                          <div className="h-full w-0 rounded-full bg-gradient-to-r from-royal to-azure" />
                         </div>
                         <p className="mt-2 text-xs text-mist">
                           Progres 0% · Label data: Manual
@@ -322,7 +322,7 @@ export default function LandingPage() {
                       </div>
                       <Button
                         asChild
-                        className="min-h-11 shrink-0 rounded-full bg-gold px-5 text-gold-ink hover:bg-gold-bright hover:gold-glow-sm"
+                        className="min-h-11 shrink-0 rounded-full bg-royal px-5 text-white hover:bg-royal-bright hover:royal-glow-sm"
                       >
                         <Link href="/app/analytics">Catat komisi</Link>
                       </Button>
@@ -340,7 +340,7 @@ export default function LandingPage() {
               <Reveal className="grid gap-4 md:grid-cols-2">
                 <Card className="border-line bg-panel/90">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base text-emerald-300">
+                    <CardTitle className="flex items-center gap-2 text-base text-azure">
                       <CheckCircle2 className="h-5 w-5" /> Fase A — Sudah jalan
                       di V5
                     </CardTitle>
@@ -390,7 +390,7 @@ export default function LandingPage() {
                     </div>
                     <Button
                       asChild
-                      className="min-h-11 shrink-0 rounded-full bg-gold px-5 text-gold-ink hover:bg-gold-bright hover:gold-glow-sm"
+                      className="min-h-11 shrink-0 rounded-full bg-royal px-5 text-white hover:bg-royal-bright hover:royal-glow-sm"
                     >
                       <Link href="/app/command">Buka Studio</Link>
                     </Button>
@@ -405,9 +405,9 @@ export default function LandingPage() {
                 <div className="glass relative overflow-hidden rounded-3xl px-6 py-14 text-center md:py-20">
                   <div
                     aria-hidden="true"
-                    className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+                    className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-royal to-transparent"
                   />
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-royal-bright">
                     Klimaks · Mulai hari ini
                   </p>
                   <h2 className="font-display mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
@@ -422,7 +422,7 @@ export default function LandingPage() {
                     <Button
                       asChild
                       size="lg"
-                      className="min-h-12 w-full rounded-full bg-gold px-6 text-gold-ink hover:bg-gold-bright hover:gold-glow sm:w-auto"
+                      className="min-h-12 w-full rounded-full bg-royal px-6 text-white hover:bg-royal-bright hover:royal-glow sm:w-auto"
                     >
                       <Link href="/app/command">
                         Mulai di Command Center <ArrowRight className="h-4 w-4" />
