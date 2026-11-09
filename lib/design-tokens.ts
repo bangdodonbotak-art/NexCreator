@@ -25,8 +25,10 @@ export const DESIGN_TOKENS = {
   /** Status "Jalan" di layar ponsel — biru terang, bukan hijau. */
   go: "#60A5FA",
   /** Nuansa khusus material 3D (bukan token UI). */
-  /** Titanium biru-gelap untuk bingkai ponsel hyper-realistic. */
-  titanium: "#1C2942",
+  /** Titanium biru-gelap untuk bingkai ponsel hyper-realistic.
+      #3A4A6B: baja biru-abu yang cukup terang agar kilau steel terbaca,
+      bukan hitam datar (sebelumnya #1C2942 terlalu gelap). */
+  titanium: "#3A4A6B",
   /** Baja terang untuk tombol samping + rim light. */
   steelLight: "#7EA2E8",
   screenDeep: "#04122B",

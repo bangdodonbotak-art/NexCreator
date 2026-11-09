@@ -14,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
  *
  * Fit-to-screen (2026-11-10): section min-h-svh full-bleed, Aurora
  * (React Bits) menutupi seluruh hero, ponsel 3D di bawah headline
- * mengisi ~62svh. Tema hitam-biru: royal = CTA, azure = aksen.
+ * mengisi sisa viewport (flex-1) — bukan tinggi svh tetap — supaya
+ * terlihat di first viewport. Tema hitam-biru: royal = CTA, azure = aksen.
  */
 
 /** Aurora React Bits — latar hero full-bleed, lazy-load seperti Hero3D. */
@@ -133,13 +134,13 @@ export default function Hero() {
           ) : (
             <Aurora
               colorStops={["#0B1E4B", "#2563EB", "#60A5FA"]}
-              amplitude={1}
+              amplitude={1.6}
               blend={0.5}
-              speed={0.5}
+              speed={1.0}
               height={0.55}
               scale={1}
-              glow={0.6}
-              brightness={0.9}
+              glow={0.8}
+              brightness={1.1}
               layers={2}
               direction="top"
               mouseInteraction
@@ -147,13 +148,15 @@ export default function Hero() {
             />
           )}
         </div>
-        {/* Vignette gelap supaya teks tetap terbaca di atas Aurora. */}
+        {/* Vignette gelap supaya teks tetap terbaca di atas Aurora.
+            Bagian atas sengaja ringan (black/25) agar pita Aurora tetap
+            tegas — headline berada di tengah (via-transparent). */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/70"
         />
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-28 md:px-6 md:pt-36">
+        <div className="hero-short relative mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-24 md:px-6 md:pt-28">
           <div className="relative text-center">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -167,14 +170,14 @@ export default function Hero() {
                 Video affiliate tanpa tampil kamera
               </Badge>
             </motion.div>
-            <div className="mt-6">
+            <div className="mt-4">
               <StaggeredHeadline />
             </div>
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.35, ease: EASE }}
-              className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-mist md:text-lg"
+              className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-mist md:text-lg"
             >
               Riset produk winning, racik naskah ATM, dan catat komisi nyata —
               tanpa tampil kamera.
@@ -183,7 +186,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.45, ease: EASE }}
-              className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+              className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row"
             >
               <Button
                 asChild
@@ -205,7 +208,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.6 }}
-              className="mt-8 flex flex-wrap items-center justify-center gap-2"
+              className="mt-4 flex flex-wrap items-center justify-center gap-2"
             >
               <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel/80 px-3 py-1.5 text-xs text-mist">
                 <Target className="h-3.5 w-3.5 text-royal-bright" />
@@ -217,13 +220,14 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Satu visual dominan: ponsel 3D hyper-realistic, tinggi
-              mengikuti viewport (bukan kotak kaku) — ruang dicadangkan
-              agar CLS tetap kecil */}
-          <div className="relative mx-auto mt-8 h-[56svh] w-full max-w-xl md:h-[62svh]">
+          {/* Satu visual dominan: ponsel 3D hyper-realistic. Wadah flex-1
+              mengisi sisa viewport (bukan h-[62svh] tetap) supaya ponsel
+              terlihat di first viewport pada 1280×800 dan 1919×998;
+              min-h menjaga ponsel tetap layak di layar kecil. */}
+          <div className="relative mx-auto mt-4 flex min-h-[260px] w-full max-w-xl flex-1">
             <Hero3D scrollProgress={scrollYProgress} />
           </div>
-          <div className="relative pb-6 pt-2 text-center">
+          <div className="relative pb-3 pt-1 text-center">
             <Link
               href="#masalah"
               aria-label="Lanjut ke Bab 1 — masalahnya"

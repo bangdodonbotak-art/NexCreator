@@ -212,10 +212,10 @@ function Phone() {
         <meshPhysicalMaterial
           color={T.titanium}
           metalness={0.9}
-          roughness={0.35}
+          roughness={0.28}
           clearcoat={1}
           clearcoatRoughness={0.15}
-          envMapIntensity={1.3}
+          envMapIntensity={2}
         />
       </RoundedBox>
       {/* tombol samping: power kanan, volume kiri */}
@@ -280,12 +280,12 @@ function PhoneRig({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
     if (!g) return;
     const t = state.clock.elapsedTime;
     const e = easeOutCubic(Math.min(1, t / 1.1));
-    const targetY = (1 - e) * 0.7 + Math.sin(t * 0.9) * 0.09;
-    const targetRotY = Math.sin(t * 0.4) * 0.045 + state.pointer.x * 0.32;
-    const targetRotX = -state.pointer.y * 0.2 + tilt.get();
-    const targetRotZ = Math.sin(t * 0.55) * 0.02;
-    const kPos = Math.min(1, delta * 3);
-    const kRot = Math.min(1, delta * 3.5);
+    const targetY = (1 - e) * 0.7 + Math.sin(t * 1.1) * 0.16;
+    const targetRotY = Math.sin(t * 0.4) * 0.09 + state.pointer.x * 0.5;
+    const targetRotX = -state.pointer.y * 0.32 + tilt.get();
+    const targetRotZ = Math.sin(t * 0.55) * 0.035;
+    const kPos = Math.min(1, delta * 4);
+    const kRot = Math.min(1, delta * 5);
     g.position.y += (targetY - g.position.y) * kPos;
     g.rotation.y += (targetRotY - g.rotation.y) * kRot;
     g.rotation.x += (targetRotX - g.rotation.x) * kRot;
@@ -304,28 +304,30 @@ function Scene({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
   return (
     <>
       {/* Pencahayaan studio biru — Lightformers via Environment lokal
-          (tanpa fetch HDR dari CDN). */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} />
+          (tanpa fetch HDR dari CDN). Key light kiri-depan + directional
+          kuat supaya tepi titanium menangkap cahaya biru-steel. */}
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 5, 5]} intensity={2} />
+      <directionalLight position={[-6, 2, 4]} intensity={2.5} color="#BFD7FF" />
       <pointLight position={[-5, -2, 3]} intensity={8} color={T.royal} />
       <pointLight position={[4, -3, 2]} intensity={8} color={T.azure} />
       <Environment resolution={256}>
         <Lightformer
-          intensity={4}
+          intensity={6}
           position={[0, 5, 0]}
           rotation-x={Math.PI / 2}
           scale={[10, 10, 1]}
           color="#BFD7FF"
         />
         <Lightformer
-          intensity={2}
+          intensity={3}
           position={[-5, 1, -1]}
           rotation-y={Math.PI / 2}
           scale={[6, 2, 1]}
           color="#2563EB"
         />
         <Lightformer
-          intensity={2}
+          intensity={3}
           position={[5, 0, -1]}
           rotation-y={-Math.PI / 2}
           scale={[6, 2, 1]}
@@ -357,7 +359,7 @@ function Scene({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
         count={70}
         scale={[8, 5, 2]}
         size={2.2}
-        speed={0.25}
+        speed={0.45}
         opacity={0.55}
         color="#60A5FA"
       />
