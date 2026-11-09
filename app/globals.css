@@ -92,6 +92,11 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Cegah scroll horizontal dari marquee / stepper di mobile. */
+  html,
+  body {
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
@@ -140,6 +145,15 @@
   /* Garis emas tipis (hairline) */
   .gold-hairline {
     background: linear-gradient(90deg, transparent, #c9a227, transparent);
+  }
+  /* Hero sinematik full-bleed: glow senja emerald + emas di atas Obsidian,
+     dengan vignette gelap di tepi agar headline tetap terbaca. */
+  .hero-glow {
+    background:
+      radial-gradient(48rem 30rem at 50% -8%, rgba(16, 185, 129, 0.2), transparent 62%),
+      radial-gradient(36rem 22rem at 12% 30%, rgba(201, 162, 39, 0.12), transparent 60%),
+      radial-gradient(36rem 22rem at 88% 30%, rgba(16, 185, 129, 0.1), transparent 60%),
+      radial-gradient(60rem 34rem at 50% 118%, rgba(201, 162, 39, 0.14), transparent 62%);
   }
   /* Mesh gradient halus di atas Obsidian */
   .mesh-hero {
