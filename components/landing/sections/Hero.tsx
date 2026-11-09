@@ -12,10 +12,12 @@ import { Badge } from "@/components/ui/badge";
  * visual 3D. Sisanya di app/page.tsx adalah server component.
  * Badge berisi kalimat manfaat, bukan jargon versi/fase.
  *
- * Fit-to-screen (2026-11-10): section min-h-svh full-bleed, Aurora
- * (React Bits) menutupi seluruh hero, ponsel 3D di bawah headline
- * mengisi sisa viewport (flex-1) — bukan tinggi svh tetap — supaya
- * terlihat di first viewport. Tema hitam-biru: royal = CTA, azure = aksen.
+ * Split layout (2026-11-10 ronde 3): desktop dua kolom — teks kiri,
+ * ponsel 3D BESAR kanan (h-[68svh] min-h-[480px] eksplisit, bukan
+ * flex-1: flex-1 gagal karena konten teks memakan viewport dan ponsel
+ * jadi miniatur ~110px di cek live 04:36 WIB). Mobile tetap stacked
+ * rata tengah, ponsel h-[54svh]. Aurora full-bleed di belakang
+ * semuanya. Tema hitam-biru: royal = CTA, azure = aksen.
  */
 
 /** Aurora React Bits — latar hero full-bleed, lazy-load seperti Hero3D. */
@@ -50,7 +52,7 @@ function StaggeredHeadline() {
     { text: "— tanpa tampil kamera." },
   ];
   return (
-    <h1 className="font-display text-balance text-center text-5xl font-semibold leading-[1.05] tracking-tight md:text-[4rem]">
+    <h1 className="font-display text-balance text-center text-5xl font-semibold leading-[1.05] tracking-tight md:text-[4rem] lg:text-left">
       {lines.map((line, li) => (
         <span key={line.text} className="block overflow-hidden pb-1">
           <motion.span
@@ -123,24 +125,26 @@ export default function Hero() {
         </div>
       </header>
 
-      {/* HERO — full-bleed fit-to-screen: Aurora menutupi seluruh hero,
-          headline + CTA di tengah, ponsel 3D ~62svh di bawahnya. */}
-      <section className="relative flex min-h-svh flex-col overflow-hidden">
-        {/* Latar Aurora (React Bits, shader WebGL2, palet biru). Fallback
-            statis: gradient biru untuk reduced-motion / sebelum load. */}
+      {/* HERO — split layout desktop: teks kiri, ponsel 3D besar kanan.
+          Aurora full-bleed di belakang semuanya. */}
+      <section className="relative min-h-svh overflow-hidden">
+        {/* Latar Aurora (React Bits, shader WebGL2, palet biru). Gradient
+            statis DI BAWAH kanvas sebagai fallback: kalau WebGL gagal,
+            latar tetap berpita biru — tidak pernah hitam polos. */}
         <div aria-hidden="true" className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(70rem_36rem_at_50%_-5%,rgba(37,99,235,0.42),transparent_62%),radial-gradient(44rem_26rem_at_88%_30%,rgba(96,165,250,0.24),transparent_60%),radial-gradient(44rem_26rem_at_8%_45%,rgba(29,78,216,0.22),transparent_60%)]" />
           {reduceMotion ? (
-            <div className="h-full w-full bg-[radial-gradient(60rem_30rem_at_50%_0%,rgba(37,99,235,0.35),transparent_60%),radial-gradient(40rem_20rem_at_85%_20%,rgba(96,165,250,0.2),transparent_60%)]" />
+            <div className="relative h-full w-full bg-[radial-gradient(60rem_30rem_at_50%_0%,rgba(37,99,235,0.35),transparent_60%),radial-gradient(40rem_20rem_at_85%_20%,rgba(96,165,250,0.2),transparent_60%)]" />
           ) : (
             <Aurora
               colorStops={["#0B1E4B", "#2563EB", "#60A5FA"]}
-              amplitude={1.6}
-              blend={0.5}
-              speed={1.0}
+              amplitude={2.2}
+              blend={0.35}
+              speed={2.0}
               height={0.55}
               scale={1}
-              glow={0.8}
-              brightness={1.1}
+              glow={1.0}
+              brightness={1.25}
               layers={2}
               direction="top"
               mouseInteraction
@@ -149,15 +153,15 @@ export default function Hero() {
           )}
         </div>
         {/* Vignette gelap supaya teks tetap terbaca di atas Aurora.
-            Bagian atas sengaja ringan (black/25) agar pita Aurora tetap
-            tegas — headline berada di tengah (via-transparent). */}
+            Bagian atas sengaja ringan (black/10) agar pita Aurora tetap
+            tegas. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/70"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70"
         />
 
-        <div className="hero-short relative mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-24 md:px-6 md:pt-28">
-          <div className="relative text-center">
+        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-6 px-4 pb-16 pt-24 md:px-6 lg:min-h-svh lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:pb-20 lg:pt-28">
+          <div className="relative text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -177,7 +181,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.35, ease: EASE }}
-              className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-mist md:text-lg"
+              className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-mist md:text-lg lg:mx-0"
             >
               Riset produk winning, racik naskah ATM, dan catat komisi nyata —
               tanpa tampil kamera.
@@ -186,7 +190,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.45, ease: EASE }}
-              className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row"
+              className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start"
             >
               <Button
                 asChild
@@ -208,7 +212,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.6 }}
-              className="mt-4 flex flex-wrap items-center justify-center gap-2"
+              className="mt-4 flex flex-wrap items-center justify-center gap-2 lg:justify-start"
             >
               <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel/80 px-3 py-1.5 text-xs text-mist">
                 <Target className="h-3.5 w-3.5 text-royal-bright" />
@@ -220,23 +224,24 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Satu visual dominan: ponsel 3D hyper-realistic. Wadah flex-1
-              mengisi sisa viewport (bukan h-[62svh] tetap) supaya ponsel
-              terlihat di first viewport pada 1280×800 dan 1919×998;
-              min-h menjaga ponsel tetap layak di layar kecil. */}
-          <div className="relative mx-auto mt-4 flex min-h-[260px] w-full max-w-xl flex-1">
+          {/* Kolom kanan — ponsel 3D BESAR. Tinggi EKSPLISIT (bukan
+              flex-1): h-[68svh] min-h-[480px] di desktop, h-[54svh]
+              min-h-[380px] di mobile. Kanvas mengisi wadah penuh. */}
+          <div className="relative h-[54svh] min-h-[380px] w-full lg:h-[68svh] lg:min-h-[480px]">
             <Hero3D scrollProgress={scrollYProgress} />
           </div>
-          <div className="relative pb-3 pt-1 text-center">
-            <Link
-              href="#masalah"
-              aria-label="Lanjut ke Bab 1 — masalahnya"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-xs text-mist transition-colors duration-150 hover:text-white"
-            >
-              Scroll ke bawah
-              <ArrowDown className="h-4 w-4 motion-safe:animate-bounce" />
-            </Link>
-          </div>
+        </div>
+        {/* Cue scroll — absolute di bawah section, di luar grid, supaya
+            tidak memakan ruang vertikal kolom teks/ponsel. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+          <Link
+            href="#masalah"
+            aria-label="Lanjut ke Bab 1 — masalahnya"
+            className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-xs text-mist transition-colors duration-150 hover:text-white"
+          >
+            Scroll ke bawah
+            <ArrowDown className="h-4 w-4 motion-safe:animate-bounce" />
+          </Link>
         </div>
       </section>
     </>

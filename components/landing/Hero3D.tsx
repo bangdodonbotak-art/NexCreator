@@ -212,10 +212,10 @@ function Phone() {
         <meshPhysicalMaterial
           color={T.titanium}
           metalness={0.9}
-          roughness={0.28}
+          roughness={0.2}
           clearcoat={1}
           clearcoatRoughness={0.15}
-          envMapIntensity={2}
+          envMapIntensity={2.5}
         />
       </RoundedBox>
       {/* tombol samping: power kanan, volume kiri */}
@@ -264,9 +264,11 @@ const easeOutCubic = (x: number) => 1 - Math.pow(1 - x, 3);
 /**
  * Rig gerak ponsel — ganti Float default yang pelan-kaku:
  * entrance naik + settle pakai spring (easeOutCubic 1,1 detik),
- * bob + sway sinus teredam, parallax pointer dengan inersia (lerp),
- * tilt mengikuti scroll hero (spring, maks -0,32 rad saat hero
- * setengah terlewati). Semua gerak hanya transform — tanpa layout.
+ * bob 0.28 + sway rotY 0.14 sinus teredam, resting rotY 0.18 rad
+ * (sisi/bevel bingkai terlihat), parallax pointer 0.7/0.45 dengan
+ * inersia (lerp), tilt mengikuti scroll hero (spring, maks -0,32 rad
+ * saat hero setengah terlewati). Skala settle 1.12. Semua gerak hanya
+ * transform — tanpa layout.
  */
 function PhoneRig({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
   const group = useRef<Group>(null);
@@ -280,9 +282,10 @@ function PhoneRig({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
     if (!g) return;
     const t = state.clock.elapsedTime;
     const e = easeOutCubic(Math.min(1, t / 1.1));
-    const targetY = (1 - e) * 0.7 + Math.sin(t * 1.1) * 0.16;
-    const targetRotY = Math.sin(t * 0.4) * 0.09 + state.pointer.x * 0.5;
-    const targetRotX = -state.pointer.y * 0.32 + tilt.get();
+    const targetY = (1 - e) * 0.7 + Math.sin(t * 1.1) * 0.28;
+    const targetRotY =
+      0.18 + Math.sin(t * 0.4) * 0.14 + state.pointer.x * 0.7;
+    const targetRotX = -state.pointer.y * 0.45 + tilt.get();
     const targetRotZ = Math.sin(t * 0.55) * 0.035;
     const kPos = Math.min(1, delta * 4);
     const kRot = Math.min(1, delta * 5);
@@ -290,11 +293,13 @@ function PhoneRig({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
     g.rotation.y += (targetRotY - g.rotation.y) * kRot;
     g.rotation.x += (targetRotX - g.rotation.x) * kRot;
     g.rotation.z += (targetRotZ - g.rotation.z) * kRot;
-    g.scale.setScalar(0.88 + 0.12 * e);
+    // Skala settle 1.12 (prop scale={1.12} di group dihapus: setScalar
+    // di sini menimpa prop itu tiap frame — satu sumber kebenaran).
+    g.scale.setScalar(0.88 + 0.24 * e);
   });
 
   return (
-    <group ref={group} scale={1.12}>
+    <group ref={group}>
       <Phone />
     </group>
   );
@@ -318,6 +323,15 @@ function Scene({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
           rotation-x={Math.PI / 2}
           scale={[10, 10, 1]}
           color="#BFD7FF"
+        />
+        {/* Lightformer BESAR putih-biru tepat di depan (menghadap ponsel)
+            supaya tepi bingkai titanium menangkap highlight lebar. */}
+        <Lightformer
+          intensity={4}
+          position={[0, 0, 5]}
+          rotation-y={Math.PI}
+          scale={[10, 6, 1]}
+          color="#DCE9FF"
         />
         <Lightformer
           intensity={3}
@@ -345,7 +359,7 @@ function Scene({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
 
       {/* Bayangan kontak di bawah ponsel — jangkar visual "nyata". */}
       <ContactShadows
-        position={[0, -2.4, -0.3]}
+        position={[0, -2.15, -0.3]}
         opacity={0.55}
         scale={9}
         blur={2.2}
@@ -440,7 +454,7 @@ export default function Hero3D({
         <StaticHero />
       ) : (
         <Canvas
-          camera={{ position: [0, 0, 7], fov: 40 }}
+          camera={{ position: [0, 0, 6.2], fov: 40 }}
           dpr={[1, 1.75]}
           frameloop="demand"
         >

@@ -230,14 +230,6 @@
   }
 }
 
-/* Viewport pendek (laptop ~800px, desktop): headline + padding hero
-   mengecil supaya ponsel muat di first viewport. Aturan ini unlayered
-   sehingga menang lawan utility Tailwind (pt-24 / md:text-[4rem]). */
-@media (max-height: 860px) and (min-width: 768px) {
-  .hero-short {
-    padding-top: 5rem;
-  }
-  .hero-short h1 {
-    font-size: 3.4rem;
-  }
-}
+/* .hero-short DIHAPUS (ronde 3): split layout membuat headline 64px
+   muat berdampingan dengan ponsel — tidak ada lagi pengecilan headline
+   di viewport pendek. */

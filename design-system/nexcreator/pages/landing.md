@@ -10,39 +10,51 @@
 > + ponsel hyper-realistic, atas permintaan Dony ("hero 3D kaku",
 > "fit to screen", "ganti dengan hyper realistic").
 
-## Hero — pola Linear (Supahero) + Aurora (React Bits)
+## Hero — split layout desktop (Supahero + Aurora, ronde 3 2026-11-10)
 
-- Satu headline tengah + satu kalimat pendukung + SATU CTA utama + SATU visual.
+- SATU visual + satu headline + satu kalimat + SATU CTA utama.
 - Headline Cormorant 64px desktop (`md:text-[4rem]`), tracking ketat,
   3 baris max. Baris aksen azure, tanpa italic di dalam heading.
-- Hero FIT-TO-SCREEN (2026-11-10): section `min-h-svh` full-bleed.
-  Latar = Aurora React Bits (shader WebGL2, pita biru mengalir +
-  mengikuti kursor, `components/landing/Aurora.tsx`) menutupi seluruh
-  hero; vignette gelap di atasnya supaya teks terbaca. Visual tunggal:
-  Hero3D (ponsel hyper-realistic 9:16) di BAWAH headline, tinggi
-  mengikuti viewport (`h-[56svh]` mobile, `h-[62svh]` desktop) — BUKAN
-  kotak kaku `h-[440px] max-w-md`. Tanpa gradient ungu, tanpa kartu
-  bertumpuk di hero.
-- Headline + kalimat + CTA utama harus terlihat di 1280x800 tanpa scroll.
+- SPLIT LAYOUT (ronde 3 — keputusan sadar, bukan asal ubah): desktop
+  dua kolom — teks RATA KIRI (badge, headline, sub, CTA, chips) di
+  kolom kiri, ponsel 3D BESAR di kolom kanan. Headline 3 baris + ponsel
+  600px TIDAK PERNAH muat berdampingan vertikal dalam viewport 998px,
+  jadi layout centered + flex-1 DIBATALKAN (ponsel jadi miniatur ~110px
+  di cek live 04:36 WIB). Mobile tetap stacked rata tengah.
+- Ponsel: wadah tinggi EKSPLISIT `h-[68svh] min-h-[480px]` desktop,
+  `h-[54svh] min-h-[380px]` mobile — BUKAN flex-1. Kanvas mengisi
+  wadah penuh (`h-full w-full`). Kamera z=6.2 fov 40 → ponsel mengisi
+  ~86% tinggi kanvas (~580px pada viewport 998, ~466px pada 800).
+- Hero FIT-TO-SCREEN: section `min-h-svh` full-bleed. Latar = Aurora
+  React Bits (shader WebGL2, pita biru mengalir + mengikuti kursor)
+  menutupi seluruh hero; gradient aurora statis DI BAWAH kanvas sebagai
+  fallback (WebGL gagal → latar tetap berpita biru, tidak hitam polos);
+  vignette atas ringan `from-black/10` supaya pita tetap tegas.
+  Tanpa gradient ungu, tanpa kartu bertumpuk di hero.
 - Aurora dijeda saat di luar viewport (IntersectionObserver bawaan
   komponen) dan saat tab tersembunyi. Fallback statis (gradient biru)
   untuk prefers-reduced-motion dan sebelum lazy-load selesai.
 
-## Ponsel hyper-realistic (2026-11-10)
+## Ponsel hyper-realistic (2026-11-10, ronde 3)
 
 - Bingkai `RoundedBox` drei + `MeshPhysicalMaterial` titanium
-  biru-gelap (metalness 0.9, roughness 0.35, clearcoat 1),
+  `#5B6B8C` (metalness 0.9, roughness 0.2, clearcoat 1,
+  envMapIntensity 2.5 — #3A4A6B masih terbaca hitam datar karena
+  metalness hanya memantulkan env map yang dominan hitam),
   pencahayaan studio via `Lightformer` di dalam `Environment` lokal
-  (TANPA fetch HDR dari CDN — preset Environment dilarang),
-  `ContactShadows` di bawah ponsel, kilau kaca diagonal (additive),
-  tombol samping tipis. Koin emas + cincin emerald DIHAPUS (kelihatan
-  mainan) — diganti debu cahaya biru (`Sparkles`).
+  (TANPA fetch HDR dari CDN — preset Environment dilarang), termasuk
+  satu Lightformer BESAR putih-biru tepat di depan (menghadap ponsel,
+  highlight lebar di tepi bingkai); `ContactShadows` di bawah ponsel,
+  kilau kaca diagonal (additive), tombol samping tipis. Koin emas +
+  cincin emerald DIHAPUS (kelihatan mainan) — diganti debu cahaya
+  biru (`Sparkles`).
 - Layar TETAP mock Command Center (CanvasTexture, teks terbaca:
   "Command Center", 0/Rp0, "Jalan/Belum", "Trigger Content Batch"),
   palet layar ikut tema biru. Proporsi tetap 9:16.
-- Gerak (ganti Float default yang kaku): entrance naik + settle spring
-  1,1 detik, bob + sway sinus teredam, parallax pointer dengan inersia
-  (lerp), tilt mengikuti scroll hero (spring, maks -0,32 rad).
+- Gerak (ronde 3): entrance naik + settle spring 1,1 detik, bob 0.28 +
+  sway rotY 0.14 sinus teredam, resting rotY 0.18 rad (sisi/bevel
+  terlihat), parallax pointer 0.7/0.45 dengan inersia (lerp), tilt
+  mengikuti scroll hero (spring, maks -0,32 rad), skala settle 1.12.
   `frameloop="demand"` + `FrameDriver` (~30fps saat terlihat) tetap.
 
 ## Nav — pill minimal mengambang (Jiro + Superhuman)
@@ -73,8 +85,9 @@
 - CTA hover: naik halus + glow royal muncul, 150ms. (Base Button sudah
   punya `hover:scale`; jangan tambah `transition: all` atau animasi
   width/height.)
-- Aurora mengalir terus di hero (speed 0,5, brightness 0,9, layers 2)
-  + ponsel bob/sway + parallax inersia + tilt scroll (lihat atas).
+- Aurora mengalir terus di hero (speed 2.0, amplitude 2.2, blend 0.35,
+  brightness 1.25, glow 1.0, layers 2) + ponsel bob/sway + parallax
+  inersia + tilt scroll (lihat atas).
 - Count-up angka Target Rp5.000.000 saat masuk viewport
   (`components/landing/CountUp.tsx`). Hanya angka NYATA yang dianimasikan —
   progres 0% dan Rp0 tercatat tetap apa adanya, tidak dikarang.
@@ -116,7 +129,7 @@
   `text-mist`, `border-line`); literal hex di komponen = pelanggaran.
 - Warna yang harus dipakai di JS (material Three.js) ada di
   `lib/design-tokens.ts` — cermin @theme, wajib dijaga sinkron.
-  Material 3D sekarang baja-biru (titanium `#1C2942`, steel `#7EA2E8`).
+  Material 3D sekarang baja-biru (titanium `#5B6B8C`, steel `#7EA2E8`).
 - Glow CTA sebagai utility (`royal-glow`, `royal-glow-sm`); indikator
   nav aktif sebagai class (`.indicator-gold-left` desktop,
   `.indicator-gold-bottom` mobile — milik AppShell, bukan landing).
