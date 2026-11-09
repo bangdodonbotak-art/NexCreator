@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import { useReducedMotion } from "framer-motion";
 import type { Group } from "three";
+import * as THREE from "three";
 import { DESIGN_TOKENS as T } from "@/lib/design-tokens";
 
 /**
@@ -82,24 +83,122 @@ function Coin({
 }
 
 /**
- * Bingkai ponsel 9:16 dengan mock setia Command Center asli
- * (app/app/command/page.tsx): header + 4 kartu statistik + 2 baris
- * pipeline + tombol batch. Angka jujur keadaan kosong: 0 / Rp0 —
+ * Layar ponsel: mock setia Command Center asli (app/app/command/page.tsx)
+ * digambar sebagai CanvasTexture 360x640 — header + 4 kartu statistik +
+ * 2 baris pipeline + tombol batch, DENGAN TEKS YANG BISA DIBACA.
+ * Mock geometri (batang/dot tanpa teks) sengaja tidak dipakai: di layar
+ * nyata cuma kelihatan abstrak. Angka jujur keadaan kosong: 0 / Rp0 —
  * tidak ada data yang dikarang.
  */
+function useScreenTexture() {
+  const tex = useMemo(() => {
+    if (typeof document === "undefined") return null;
+    const W = 360;
+    const H = 640;
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    if (!ctx) return null;
+    const rr = (x: number, y: number, w: number, h: number, r: number) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    };
+    // latar layar
+    ctx.fillStyle = T.panelDeep;
+    ctx.fillRect(0, 0, W, H);
+    // header
+    ctx.fillStyle = T.ink;
+    rr(16, 16, 328, 46, 12);
+    ctx.fill();
+    ctx.fillStyle = T.gold;
+    ctx.beginPath();
+    ctx.arc(38, 39, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = T.fog;
+    ctx.font = "600 20px system-ui, -apple-system, sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Command Center", 56, 40);
+    ctx.fillStyle = T.emerald;
+    rr(272, 26, 56, 26, 13);
+    ctx.fill();
+    ctx.fillStyle = T.ink;
+    ctx.font = "700 14px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Fase A", 300, 40);
+    ctx.textAlign = "left";
+    // 4 kartu statistik
+    const stats: { value: string; label: string; color: string }[] = [
+      { value: "0", label: "Produk terdata", color: T.fog },
+      { value: "0", label: "Draft naskah", color: T.fog },
+      { value: "0", label: "Antrean aktif", color: T.fog },
+      { value: "Rp0", label: "Komisi bulan ini", color: T.gold },
+    ];
+    stats.forEach((s, i) => {
+      const x = 16 + (i % 2) * 172;
+      const y = 78 + Math.floor(i / 2) * 132;
+      ctx.fillStyle = T.ink;
+      rr(x, y, 156, 116, 12);
+      ctx.fill();
+      ctx.fillStyle = s.color;
+      ctx.font = "700 34px system-ui, -apple-system, sans-serif";
+      ctx.fillText(s.value, x + 16, y + 46);
+      ctx.fillStyle = T.mist;
+      ctx.font = "500 15px system-ui, -apple-system, sans-serif";
+      ctx.fillText(s.label, x + 16, y + 82);
+    });
+    // 2 baris pipeline
+    const rows: { label: string; status: string; color: string; dot: string }[] = [
+      { label: "Hunter · produk winning", status: "Jalan", color: T.emerald, dot: T.emerald },
+      { label: "Studio · production pack", status: "Belum", color: T.amber, dot: T.amber },
+    ];
+    rows.forEach((r, i) => {
+      const y = 358 + i * 64;
+      ctx.fillStyle = T.ink;
+      rr(16, y, 328, 52, 12);
+      ctx.fill();
+      ctx.fillStyle = r.dot;
+      ctx.beginPath();
+      ctx.arc(38, y + 26, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = T.fog;
+      ctx.font = "600 16px system-ui, -apple-system, sans-serif";
+      ctx.fillText(r.label, 56, y + 27);
+      ctx.fillStyle = r.color;
+      ctx.font = "700 15px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(r.status, 328, y + 27);
+      ctx.textAlign = "left";
+    });
+    // tombol batch emas
+    ctx.fillStyle = T.gold;
+    rr(16, 556, 328, 52, 26);
+    ctx.fill();
+    ctx.fillStyle = T.ink;
+    ctx.font = "700 19px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Trigger Content Batch", W / 2, 583);
+    ctx.textAlign = "left";
+    const texture = new THREE.CanvasTexture(c);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }, []);
+  useEffect(() => {
+    return () => {
+      tex?.dispose();
+    };
+  }, [tex]);
+  return tex;
+}
+
 function Phone() {
-  // 4 kartu statistik Command Center: nilai kosong (0 / Rp0).
-  const stats: { x: number; y: number; accent: string }[] = [
-    { x: -0.4, y: 0.95, accent: T.emerald },
-    { x: 0.4, y: 0.95, accent: T.gold },
-    { x: -0.4, y: 0.32, accent: T.emerald },
-    { x: 0.4, y: 0.32, accent: T.gold },
-  ];
-  // 2 baris pipeline: Hunter jalan, render GPU belum.
-  const rows: { y: number; dot: string }[] = [
-    { y: -0.42, dot: T.emerald },
-    { y: -0.74, dot: T.amber },
-  ];
+  const screenTex = useScreenTexture();
   return (
     <group>
       {/* bodi */}
@@ -107,73 +206,15 @@ function Phone() {
         <boxGeometry args={[1.95, 3.45, 0.14]} />
         <meshStandardMaterial color={T.panel} metalness={0.4} roughness={0.35} />
       </mesh>
-      {/* layar */}
+      {/* layar: tekstur mock Command Center (teks terbaca). meshBasicMaterial
+          supaya teks tajam dan tidak gelap karena pencahayaan scene. */}
       <mesh position={[0, 0, 0.08]}>
         <planeGeometry args={[1.75, 3.25]} />
-        <meshStandardMaterial
-          color={T.screenDeep}
-          emissive={T.emerald}
-          emissiveIntensity={0.35}
-          metalness={0.2}
-          roughness={0.4}
-        />
-      </mesh>
-      {/* header mock: strip + dot emas + garis judul */}
-      <mesh position={[0, 1.4, 0.1]}>
-        <planeGeometry args={[1.55, 0.26]} />
-        <meshStandardMaterial color={T.ink} metalness={0.2} roughness={0.5} />
-      </mesh>
-      <mesh position={[-0.62, 1.4, 0.12]}>
-        <circleGeometry args={[0.07, 24]} />
-        <meshStandardMaterial color={T.gold} emissive={T.gold} emissiveIntensity={0.7} />
-      </mesh>
-      <mesh position={[-0.12, 1.4, 0.12]}>
-        <planeGeometry args={[0.7, 0.06]} />
-        <meshStandardMaterial color={T.mist} metalness={0.1} roughness={0.6} />
-      </mesh>
-      {/* 4 kartu statistik */}
-      {stats.map((c, i) => (
-        <group key={i} position={[c.x, c.y, 0]}>
-          <mesh position={[0, 0, 0.1]}>
-            <planeGeometry args={[0.72, 0.52]} />
-            <meshStandardMaterial color={T.ink} metalness={0.2} roughness={0.5} />
-          </mesh>
-          {/* garis nilai + garis label */}
-          <mesh position={[-0.12, 0.1, 0.12]}>
-            <planeGeometry args={[0.4, 0.08]} />
-            <meshStandardMaterial color={c.accent} emissive={c.accent} emissiveIntensity={0.6} />
-          </mesh>
-          <mesh position={[-0.06, -0.12, 0.12]}>
-            <planeGeometry args={[0.52, 0.05]} />
-            <meshStandardMaterial color={T.mist} metalness={0.1} roughness={0.6} />
-          </mesh>
-        </group>
-      ))}
-      {/* 2 baris pipeline */}
-      {rows.map((r, i) => (
-        <group key={i} position={[0, r.y, 0]}>
-          <mesh position={[0, 0, 0.1]}>
-            <planeGeometry args={[1.55, 0.24]} />
-            <meshStandardMaterial color={T.ink} metalness={0.2} roughness={0.5} />
-          </mesh>
-          <mesh position={[-0.62, 0, 0.12]}>
-            <circleGeometry args={[0.06, 24]} />
-            <meshStandardMaterial color={r.dot} emissive={r.dot} emissiveIntensity={0.7} />
-          </mesh>
-          <mesh position={[0.05, 0, 0.12]}>
-            <planeGeometry args={[1.0, 0.05]} />
-            <meshStandardMaterial color={T.mist} metalness={0.1} roughness={0.6} />
-          </mesh>
-        </group>
-      ))}
-      {/* tombol batch emas di bawah */}
-      <mesh position={[0, -1.38, 0.1]}>
-        <planeGeometry args={[1.55, 0.3]} />
-        <meshStandardMaterial color={T.gold} emissive={T.gold} emissiveIntensity={0.35} />
-      </mesh>
-      <mesh position={[0, -1.38, 0.12]}>
-        <planeGeometry args={[0.8, 0.07]} />
-        <meshStandardMaterial color={T.ink} metalness={0.1} roughness={0.6} />
+        {screenTex ? (
+          <meshBasicMaterial map={screenTex} toneMapped={false} />
+        ) : (
+          <meshStandardMaterial color={T.screenDeep} metalness={0.2} roughness={0.4} />
+        )}
       </mesh>
     </group>
   );
